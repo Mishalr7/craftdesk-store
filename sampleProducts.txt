@@ -1,0 +1,44 @@
+
+  let products = [
+  {
+    name: "Camlin Premio A4 Single Rule 300 Pages Notebook",
+    price: 198,
+    brand: "Camlin",
+    stock: "In Stock",
+    category: "Notebooks",
+    image: "https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcQEmTlIVGbES-QoaZZ6-j5cZTGqDz2-b0QYrA1w_QlELof3kZg1bKPz5rGeu0ngL0aM4TRF65zPE7QsRAXkya01SwN4nWeL-3vzOvIIeszc7yVPbZUcy7Uwhgoz"
+  },
+    {
+    name: "Faber-Castell 48 Triangular Colour Pencils",
+    price: 280,
+    brand: "Faber-Castell",
+    stock: "In Stock",
+    category: "Pencils",
+    image: "https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcSS5NglkVOpwY1O_qsoyJaLLiAqiD-hFovmQ2jdC2gJNx4WlIUk3yT3tfYrL-ylzC4Vd1y4SJ4V9UoZukIxYwwgj6nECUxBShCPCefVBRu3oNGL76BdgYxP"
+  },
+  {
+    name: "CrafTreat Scrapbook Hexagon Roll up - Red",
+    price: 349,
+    brand: "CrafTreat",
+    stock: "In Stock",
+    category: "Scrapbooks",
+    image: "https://thecraftshop.in/cdn/shop/files/CrafTreat_Scrapbook_Hexagon_Roll_up_-_Red_Green_CFS002_6baca69e-0408-4c98-a8bc-daf5862d269a_512x384.png?v=1763804765"
+  },
+  {
+   name: "Camel Artist Water Colour Tubes",
+   price: 210,
+    brand: "Camel",
+    stock: "In Stock",
+    category: "Water Colours",
+    image: "https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcRWQR4JdicPQ2y_G_5UG25U1OnLaGmFS62IKuZk3haMkoEURhdWQPFWkR9g4hG8v0sbYn1TGrXftPYaNxrkaSkwNpAfrk4eMvHA_limeTvsk4FitlFOCJLRGNg"
+  },
+  {
+     name: "Solo Ring Binder File A4",
+   price:148,
+    brand:"Solo",
+    stock:"In Stock",
+    category:"Binders",
+    image:"https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcQix38KdgQ4Jmj3aLU-CVfVzdEP9ux_xkcFaGVJB47C1Jaz0TbcqcyKYOwDJXkm8zAP1w0X6iGMmju0_usUJ1jAS_kRiJxbghNpezT1XfpfkD7S61OUU1y1"
+  }
+];
+

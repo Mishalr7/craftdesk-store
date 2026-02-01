@@ -1,0 +1,50 @@
+
+<main>
+  <section class="featured-products py-4">
+<div class="container my-4">
+  <h2 class="section-title mb-4">Featured Products</h2>
+
+  <div class="products-grid">
+    {{#each products}}
+
+    <!-- CARD -->
+    <div class="product-card">
+      <div class="product-img">
+{{#if this.images}}
+  {{#if (startsWith this.images.[0] "http")}}
+      <img src="{{this.images.[0]}}" class="admin-product-img me-3">
+  {{else}}
+      <img src="/product-images/{{this.images.[0]}}" class="admin-product-img me-3">
+  {{/if}}
+{{else}}
+  <img src="/img/no-image.png" class="admin-product-img me-3">
+{{/if}}
+
+
+      </div>
+
+      <div class="product-info">
+        <h5 class="price">₹{{this.price}}</h5>
+        <p class="title">{{this.name}}</p>
+        <span class="brand">{{this.brand}}</span>
+        {{#if this.stock}}
+  <span class="badge bg-success">In Stock</span>
+{{else}}
+  <span class="badge bg-danger">Out of Stock</span>
+{{/if}}
+
+      </div>
+
+      <div class="actions">
+        <button class="btn-outline">Quick Shop</button>
+        <button class="btn-main">Add to Cart</button>
+      </div>
+    </div>
+    <!-- END CARD -->
+{{/each}}
+   
+
+  </div>
+</div>
+  </section>
+</main>

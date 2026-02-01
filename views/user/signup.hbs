@@ -1,0 +1,37 @@
+<section class="signup-wrap">
+  <div class="signup-card">
+
+    <h2 class="signup-title">Create Account</h2>
+    <p class="signup-sub">Join CraftDesk for deals and new arrivals.</p>
+    {{#if signupError}}
+      <p class="error-text">Email already in use. Please use a different email.</p>
+    {{/if}}
+    <form action="/signup" method="POST" class="signup-form">
+
+      <div class="row-2">
+        <input type="text" name="firstName" placeholder="First Name" required>
+        <input type="text" name="lastName" placeholder="Last Name" required>
+      </div>
+
+      <input type="email" name="email" placeholder="Email" required>
+      <input 
+  type="password" 
+  name="password" 
+  placeholder="Password"
+  minlength="5"
+  pattern="^(?=.*[A-Za-z])(?=.*\d).{5,}$"
+  title="Password must be at least 5 characters and include one letter and one number"
+  required
+>
+
+
+      <button type="submit" class="btn-main">Sign Up</button>
+
+      <p class="switch-text">
+        Already have an account?
+        <a href="/login">Log in</a>
+      </p>
+
+    </form>
+  </div>
+</section>

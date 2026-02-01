@@ -1,0 +1,28 @@
+<section class="login-page container">
+  <h1 class="login-title">My Account</h1>
+
+  <div class="login-grid">
+    <div class="login-box">
+      <h3>Login</h3>
+
+      {{#if loginError}}
+        <p class="error-text">Invalid email or password</p>
+      {{/if}}
+
+      <form action="/login" method="post">
+        <input placeholder="Email" name="email" required>
+        <input type="password" placeholder="Password" name="password" required>
+
+        <a class="forgot-link" href="/forgot">Forgot password?</a>
+
+        <button class="btn-main">Sign In</button>
+      </form>
+    </div>
+
+    <div class="login-box">
+      <h3>New Customer</h3>
+      <p>Sign up for early access and special offers.</p>
+      <a href="/signup" class="btn-signup">Sign Up</a>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,177 @@
+<section class="container py-4">
+
+  <!-- Header Row -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h3 class="text-white fw-bold">Products</h3>
+      <p class="admin-muted">Manage your product catalog</p>
+    </div>
+
+    <a href="/admin/add-product" class="btn btn-primary">
+      <i class="bi bi-plus-lg"></i> Add Product
+    </a>
+  </div>
+
+  <!-- Table Card -->
+  <div class="admin-products-card">
+
+    <!-- Search -->
+    <div class="p-3">
+      <div class="input-group">
+        <span class="input-group-text bg-dark text-white border-0">
+          <i class="bi bi-search"></i>
+        </span>
+        <input type="text" class="form-control admin-search-input admin-muted-input" placeholder="Search products...">
+      </div>
+    </div>
+
+    <!-- Scrollable Table -->
+    <div class="table-responsive">
+      <table class="table admin-table-dark table-hover align-middle mb-0">
+
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th width="160">Brand</th>
+            <th width="160">Category</th>
+            <th width="140">Price</th>
+            <th width="160">Status</th>
+            <th width="120" class="text-center">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {{#each products}}
+          <tr>
+            <td>
+          <div class="d-flex align-items-center">
+
+  <div class="position-relative">
+    
+    <!-- Main Image -->
+{{#if this.images}}
+  {{#if (startsWith this.images.[0] "http")}}
+      <img src="{{this.images.[0]}}" class="admin-product-img me-3">
+  {{else}}
+      <img src="/product-images/{{this.images.[0]}}" class="admin-product-img me-3">
+  {{/if}}
+{{else}}
+  <img src="/img/no-image.png" class="admin-product-img me-3">
+{{/if}}
+
+
+  </div>
+
+  <div>
+    <strong>{{this.name}}</strong>
+    <div class="admin-muted small">{{../this._id}}</div>
+  </div>
+
+</div>
+
+            </td>
+
+            <td>
+              {{#if this.brand}}
+                {{this.brand}}
+              {{else}}
+                <span class="admin-muted">No brand</span>
+              {{/if}}
+            </td>
+            <td>
+  {{#if this.category}}
+    {{this.category}}
+  {{else}}
+    <span class="admin-muted">No Category</span>
+  {{/if}}
+</td>
+
+
+            <td>₹{{this.price}}</td>
+
+            <td>
+              {{#if this.stock}}
+                <span class="badge bg-success px-3 py-2">In Stock</span>
+              {{else}}
+                <span class="badge bg-danger px-3 py-2">Out of Stock</span>
+              {{/if}}
+            </td>
+
+            <td class="text-center">
+              <a href="/admin/edit-product/{{this._id}}" class="text-info mx-2">
+                <i class="bi bi-pencil-square"></i>
+              </a>
+        <a href="javascript:void(0)" class="text-danger mx-2" onclick="openDeleteModal('{{this._id}}', '{{this.name}}')">
+  <i class="bi bi-trash"></i>
+</a>
+
+
+            </td>
+          </tr>
+          {{/each}}
+        </tbody>
+
+      </table>
+    </div>
+
+  </div>
+  <!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content custom-modal">
+
+      <div class="modal-header custom-modal-header">
+        <h5 class="modal-title">
+          <i class="bi bi-exclamation-triangle text-warning me-2"></i>
+          Delete Product
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        <p class="soft-text mb-1">You are about to delete</p>
+        <h6 id="deleteProductName" class="fw-bold text-warning"></h6>
+
+       
+<div class="confirm-box soft-text">
+  Type <strong class="text-danger">DELETE</strong> to confirm
+</div>
+
+        <input id="deleteInput" class="form-control custom-input mt-2" placeholder="Type DELETE">
+      </div>
+
+      <div class="modal-footer custom-modal-footer">
+        <button class="btn btn-outline-light" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn btn-danger glow-btn" onclick="confirmDeleteFinal()">Delete Permanently</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+let deleteId = "";
+
+function openDeleteModal(id, name) {
+  deleteId = id;
+  document.getElementById("deleteProductName").innerText = name;
+  document.getElementById("deleteInput").value = "";
+
+  let modal = new bootstrap.Modal(document.getElementById("deleteModal"));
+  modal.show();
+}
+
+function confirmDeleteFinal() {
+  const value = document.getElementById("deleteInput").value;
+
+  if (value === "DELETE") {
+    window.location.href = "/admin/delete-product/" + deleteId;
+  } else {
+    alert("Type DELETE correctly to confirm.");
+  }
+}
+</script>
+
+
+
+</section>

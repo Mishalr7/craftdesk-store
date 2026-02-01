@@ -1,0 +1,97 @@
+<header>
+    <!-- Premium Top Bar -->
+    <div class="top-bar text-center">
+      Free Shipping on orders above ₹999 • Exclusive Deals Everyday
+    </div>
+
+    <nav class="navbar navbar-expand-lg premium-nav shadow-sm">
+      <div class="container">
+
+        <!-- Brand -->
+        <a class="navbar-brand fw-bold" href="/">
+          <i class="bi bi-bag-check-fill me-2 brand-icon"></i>
+          CraftDesk<span class="accent"> Online</span>
+        </a>
+
+        <!-- Toggle -->
+        <div class="d-flex align-items-center gap-3">
+
+          <!-- CART ALWAYS VISIBLE -->
+          <a href="#" class="position-relative nav-cart d-lg-none">
+            <i class="bi bi-bag-fill"></i>
+            <span class="cart-badge">2</span>
+          </a>
+
+          <!-- Toggle -->
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navBar">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+        </div>
+        <!-- Mobile Search Always Visible -->
+        <form class="search-area d-lg-none mt-2">
+          <input class="form-control" type="search" placeholder="Search products...">
+        </form>
+
+
+
+        <div class="collapse navbar-collapse" id="navBar">
+
+          <!-- Menu -->
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item"><a class="nav-link active" href="/">Home</a></li>
+
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Categories</a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#">Office Essentials</a></li>
+                <li><a class="dropdown-item" href="#">Craft & DIY</a></li>
+                <li><a class="dropdown-item" href="#">Art & Paints</a></li>
+                <li><a class="dropdown-item" href="#">Stationery</a></li>
+              </ul>
+            </li>
+
+            <li class="nav-item"><a class="nav-link" href="#">New Arrivals</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Sale</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Blog</a></li>
+          </ul>
+
+          <!-- Search -->
+          <!-- Search (Desktop) -->
+          <form class="d-flex me-3 search-area d-none d-lg-flex">
+            <input class="form-control" type="search" placeholder="Search products...">
+          </form>
+
+
+          <!-- Icons -->
+<div class="d-flex gap-3 nav-icons">
+
+  {{#if user}}
+    <!-- Logged in -->
+    <a href="/account" class="icon-tip" data-tip="My Account">
+      <i class="bi bi-person"></i>
+    </a>
+  {{else}}
+    <!-- Logged out -->
+    <a href="/login" class="icon-tip" data-tip="Login">
+      <i class="bi bi-person"></i>
+    </a>
+  {{/if}}
+
+  <a href="#" class="icon-tip" data-tip="Wishlist">
+    <i class="bi bi-heart"></i>
+  </a>
+
+  <a href="/cart" class="position-relative nav-cart icon-tip" data-tip="Cart">
+    <i class="bi bi-bag-fill"></i>
+    <span class="cart-badge">2</span>
+  </a>
+
+</div>
+
+
+        </div>
+      </div>
+    </nav>
+
+  </header>

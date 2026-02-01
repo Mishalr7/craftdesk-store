@@ -1,0 +1,67 @@
+<header>
+  <nav class="navbar navbar-expand-lg admin-nav shadow-sm fixed-top">
+    <div class="container">
+
+      <!-- Brand -->
+      <a class="navbar-brand fw-bold" href="/admin">
+        <i class="bi bi-speedometer2 me-2"></i>
+        CraftDesk <span class="admin-accent">Admin</span>
+      </a>
+
+      <!-- Toggle -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="adminNav">
+
+        <!-- Menu -->
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+  <a class="nav-link {{#if (eq activePage 'dashboard')}}active{{/if}}" href="/admin">
+    Dashboard
+  </a>
+</li>
+
+<li class="nav-item">
+  <a class="nav-link {{#if (eq activePage 'products')}}active{{/if}}" href="/admin/products">
+    Products
+  </a>
+</li>
+
+<li class="nav-item">
+  <a class="nav-link {{#if (eq activePage 'orders')}}active{{/if}}" href="/admin/orders">
+    Orders
+  </a>
+</li>
+
+<li class="nav-item">
+  <a class="nav-link {{#if (eq activePage 'users')}}active{{/if}}" href="/admin/users">
+    Users
+  </a>
+</li>
+
+
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+              Settings
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="/admin/profile">Profile</a></li>
+              <li><a class="dropdown-item" href="/admin/site-settings">Site Settings</a></li>
+            </ul>
+          </li>
+        </ul>
+
+        <!-- Right Side -->
+        <div class="d-flex gap-3 admin-right">
+          <span class="admin-tag">ADMIN MODE</span>
+          <a href="/logout" class="btn btn-admin-logout">
+            <i class="bi bi-box-arrow-right me-1"></i> Logout
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </nav>
+</header>

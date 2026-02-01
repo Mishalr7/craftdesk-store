@@ -1,0 +1,98 @@
+<section class="container py-4">
+
+  <div class="admin-products-card p-4">
+
+    <h2 class="text-white fw-bold mb-4">Add New Product</h2>
+
+    <form action="/admin/add-product" method="POST" enctype="multipart/form-data">
+
+      <div class="mb-3">
+        <label class="admin-muted">Product Name</label>
+        <input name="name" class="form-control admin-input-dark" required>
+      </div>
+
+      <div class="mb-3">
+        <label class="admin-muted">Price</label>
+        <input name="price" type="number" class="form-control admin-input-dark" required>
+      </div>
+
+      <div class="mb-3">
+        <label class="admin-muted">Brand</label>
+        <input name="brand" class="form-control admin-input-dark">
+      </div>
+      
+      <div class="mb-3">
+  <label class="admin-muted">Category</label>
+  <input name="category" class="form-control admin-input-dark" required>
+</div>
+
+
+      <div class="mb-3">
+        <label class="admin-muted">Stock Status</label>
+        <select name="stock" class="form-control admin-input-dark">
+          <option value="true">In Stock</option>
+          <option value="false">Out of Stock</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label class="admin-muted">Upload Images</label>
+        <input name="images" type="file" class="form-control admin-input-dark" multiple>
+        <small class="admin-muted">You can select multiple files</small>
+      </div>
+
+      <div class="mb-3">
+        <label class="admin-muted">Or Image URL</label>
+        <input name="imageUrl" class="form-control admin-input-dark" placeholder="https://example.com/product.jpg">
+      </div>
+
+      <div class="mb-3">
+        <label class="admin-muted">Description</label>
+        <textarea name="description" class="form-control admin-input-dark" rows="4"></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-primary px-4">
+        Save Product
+      </button>
+
+    </form>
+
+  </div>
+
+</section>
+
+<!-- Client-Side Validation -->
+<script>
+document.querySelector("form").addEventListener("submit", function(e){
+
+  const files = document.querySelector('input[name="images"]').files;
+  const imageUrl = document.querySelector('input[name="imageUrl"]').value.trim();
+
+  if (!files.length && imageUrl === "") {
+      e.preventDefault();
+
+      Swal.fire({
+        icon: 'error',
+        title: 'Image Required',
+        text: 'Please upload at least one image or provide an image URL.',
+        background: '#0b1626',
+        color: '#fff',
+        confirmButtonColor: '#ff4d4d'
+      });
+  }
+});
+</script>
+
+<!-- Backend Validation Error -->
+{{#if error}}
+<script>
+Swal.fire({
+  icon: 'error',
+  title: 'Missing Image',
+  text: '{{error}}',
+  background: '#0b1626',
+  color: '#fff',
+  confirmButtonColor: '#ff4d4d'
+})
+</script>
+{{/if}}
