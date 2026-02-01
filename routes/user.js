@@ -25,17 +25,26 @@ router.get('/account', (req, res) => {
 })
 
 
-router.get('/login', (req,res)=>{
-  res.render('user/login');
-});
 
 router.get('/logout', (req, res) => {
   req.session.destroy()
   res.redirect('/')
 })
 
-router.get('/signup', (req,res)=>{
-  res.render('user/signup');
+router.get('/login', (req, res) => {
+  if (req.session.loggedIn) {
+    res.redirect('/account')
+  } else {
+    res.render('user/login')
+  }
+});
+
+router.get('/signup', (req, res) => {
+  if (req.session.loggedIn) {
+    res.redirect('/account')
+  } else {
+    res.render('user/signup')
+  }
 });
 
 
@@ -51,7 +60,7 @@ userHelpers.doSignup(req.body)
     res.redirect('/account')
   })
   .catch(err => {
-    res.render('user/signup', { error: err })
+    res.render('user/signup', { signupError: err })
   })
 
 })

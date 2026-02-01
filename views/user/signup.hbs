@@ -14,15 +14,35 @@
       </div>
 
       <input type="email" name="email" placeholder="Email" required>
-      <input 
-  type="password" 
-  name="password" 
-  placeholder="Password"
-  minlength="5"
-  pattern="^(?=.*[A-Za-z])(?=.*\d).{5,}$"
-  title="Password must be at least 5 characters and include one letter and one number"
-  required
->
+<div class="password-wrap">
+  <input 
+    type="password" 
+    id="password"
+    name="password"
+    placeholder="Password"
+    required
+  >
+  <i class="bi bi-eye password-toggle" onclick="togglePassword('password', this)"></i>
+</div>
+
+
+<div class="password-wrap">
+  <input 
+    type="password" 
+    id="confirmPassword"
+    name="confirmPassword"
+    placeholder="Confirm Password"
+    required
+  >
+  <i class="bi bi-eye password-toggle" onclick="togglePassword('confirmPassword', this)"></i>
+</div>
+
+<p id="passwordError" class="error-text" style="display:none">
+  Passwords do not match
+</p>
+
+
+
 
 
       <button type="submit" class="btn-main">Sign Up</button>

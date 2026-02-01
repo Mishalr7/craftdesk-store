@@ -1093,3 +1093,134 @@ input[type="file"].admin-input-dark::-moz-file-upload-button {
   font-size:14px;
   font-weight:600;
 }
+/* ACCOUNT DASHBOARD */
+
+.account-wrap {
+  margin-top: 130px;
+  padding: 40px 15px;
+  display: flex;
+  justify-content: center;
+}
+
+.account-dashboard {
+  width: 100%;
+  max-width: 900px;
+}
+
+.account-header {
+  margin-bottom: 30px;
+}
+
+.account-header h2 {
+  font-size: 2rem;
+  color: #174d43;
+  margin-bottom: 5px;
+}
+
+.account-header p {
+  color: #6f6f6f;
+  font-size: 15px;
+}
+
+/* Cards Grid */
+.account-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.account-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  text-decoration: none;
+  color: #2c2c2c;
+  box-shadow: 0 12px 30px rgba(0,0,0,.08);
+  transition: 0.3s ease;
+}
+
+.account-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px rgba(0,0,0,.12);
+}
+
+.account-card .icon {
+  font-size: 28px;
+}
+
+.account-card h4 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.account-card p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #6f6f6f;
+}
+
+/* Logout special */
+.account-card.logout {
+  border: 1px solid #ff6b6b;
+}
+
+.account-card.logout h4 {
+  color: #ff6b6b;
+}
+
+/* Mobile */
+@media(max-width: 768px) {
+  .account-cards {
+    grid-template-columns: 1fr;
+  }
+}
+.password-field {
+  position: relative;
+}
+
+.password-field input {
+  width: 100%;
+  padding-right: 42px;
+}
+
+.toggle-eye {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 16px;
+  color: #26a69a;
+  user-select: none;
+}
+
+.toggle-eye:hover {
+  color: #136760;
+}
+.password-wrap {
+  position: relative;
+}
+
+.password-wrap input {
+  width: 100%;
+  padding-right: 42px;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #6f6f6f;
+  font-size: 18px;
+  transition: 0.2s;
+}
+
+.password-toggle:hover {
+  color: #26a69a; /* your teal */
+}

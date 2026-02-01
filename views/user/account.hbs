@@ -1,10 +1,48 @@
-<h2>My Account</h2>
-<p>Welcome, {{user.name}}</p>
+<section class="account-wrap">
+  <div class="account-dashboard">
 
-<ul>
-  <li>My Orders</li>
-  <li>Addresses</li>
-  <li>Profile Settings</li>
-  <li>Logout</li>
-</ul>
+    <!-- Header -->
+    <div class="account-header">
+      <h2>My Account</h2>
+      <p>Welcome back, <strong>{{user.firstName}}</strong> 👋</p>
+    </div>
 
+    <!-- Cards -->
+    <div class="account-cards">
+
+      <a href="#" class="account-card">
+        <div class="icon">📦</div>
+        <div>
+          <h4>My Orders</h4>
+          <p>View and track your orders</p>
+        </div>
+      </a>
+
+      <a href="#" class="account-card">
+        <div class="icon">🏠</div>
+        <div>
+          <h4>Addresses</h4>
+          <p>Manage delivery addresses</p>
+        </div>
+      </a>
+
+      <a href="#" class="account-card">
+        <div class="icon">⚙️</div>
+        <div>
+          <h4>Profile Settings</h4>
+          <p>Update personal information</p>
+        </div>
+      </a>
+
+      <a href="/logout" class="account-card logout">
+        <div class="icon">🚪</div>
+        <div>
+          <h4>Logout</h4>
+          <p>Sign out of your account</p>
+        </div>
+      </a>
+
+    </div>
+
+  </div>
+</section>

@@ -21,7 +21,7 @@ doSignup: (userData) => {
       if (existingUser) {
         return reject("Email already registered");
       }
-
+      delete userData.confirmPassword;
       userData.password = await bcrypt.hash(userData.password, 10);
 
       const result = await db.get()

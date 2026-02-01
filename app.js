@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const session = require('express-session')
 
 var userRouter = require('./routes/user');
 var adminRouter = require('./routes/admin');
@@ -32,6 +33,22 @@ db.connect((err)=>{
   if(err) console.log("Connection Error",err);
   else console.log("Database Connected");
 });
+app.use(session({
+  secret: 'craftdesk-secret-key',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24 // 1 day
+  }
+}))
+
+app.use((req, res, next) => {
+  res.locals.user = req.session.user;
+  res.locals.loggedIn = req.session.loggedIn;
+  next();
+});
+
+
 
 app.use('/', userRouter);
 app.use('/admin', adminRouter);
