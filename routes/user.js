@@ -23,15 +23,10 @@ router.get('/', (req, res) => {
       res.send("Error loading products");
     });
 });
-router.get('/account', (req, res) => {
-  if (req.session.loggedIn) {
-    res.render('user/account', { user: req.session.user })
-  } else {
-    res.redirect('/login')
-  }
-})
 
-
+router.get('/account', verifyLogin, (req, res) => {
+  res.render('user/account');
+});
 
 router.get('/logout', (req, res) => {
   req.session.destroy()
@@ -90,9 +85,56 @@ router.post('/login', (req, res) => {
       res.render('user/login', { loginError: true })
     })
 })
-router.get('/cart',(req,res)=>{
-  res.render('user/cart')
-})
+
+router.get('/cart', async (req, res) => {
+
+  const cart = req.session.cart || [];
+
+  let cartProducts = [];
+
+  for (let item of cart) {
+    const product = await productHelpers.getProductById(item.productId);
+
+if (product) {
+  cartProducts.push({
+    ...product,
+    quantity: item.quantity
+  });
+}
+  }
+
+  res.render('user/cart', {
+    cartProducts,
+    loggedIn: req.session.loggedIn
+  });
+});
+
+router.get('/add-to-cart/:id', async (req, res) => {
+
+  const productId = req.params.id;
+
+  if (!req.session.cart) {
+    req.session.cart = [];
+  }
+
+  const existingItem = req.session.cart.find(p => p.productId === productId);
+
+  if (existingItem) {
+    existingItem.quantity += 1;
+  } else {
+    req.session.cart.push({
+      productId,
+      quantity: 1
+    });
+  }
+
+res.redirect(req.get("Referrer") || "/");
+});
+
+router.get('/checkout', verifyLogin, (req, res) => {
+  res.render('user/checkout');
+});
+
 
 
 module.exports = router;

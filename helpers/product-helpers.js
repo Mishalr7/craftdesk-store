@@ -43,8 +43,20 @@ deleteProduct: async (prodId) => {
     .deleteOne({ _id: new ObjectId(prodId) });
 
   return product;
-}
+},
+  getProductById: (productId) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const product = await db.get()
+          .collection(collection.PRODUCT_COLLECTION)
+          .findOne({ _id: new ObjectId(productId) });
 
+        resolve(product);
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
 
 };
 

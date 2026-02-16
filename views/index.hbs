@@ -8,38 +8,51 @@
     {{#each products}}
 
     <!-- CARD -->
-    <div class="product-card">
-      <div class="product-img">
-{{#if this.images}}
-  {{#if (startsWith this.images.[0] "http")}}
-      <img src="{{this.images.[0]}}" class="admin-product-img me-3">
-  {{else}}
-      <img src="/product-images/{{this.images.[0]}}" class="admin-product-img me-3">
-  {{/if}}
-{{else}}
-  <img src="/img/no-image.png" class="admin-product-img me-3">
+<div class="product-card">
+  <div class="product-img">
+    {{#if this.images}}
+      {{#if (startsWith this.images.[0] "http")}}
+        <img src="{{this.images.[0]}}" alt="{{this.name}}">
+      {{else}}
+        <img src="/product-images/{{this.images.[0]}}" alt="{{this.name}}">
+      {{/if}}
+    {{else}}
+      <img src="/img/no-image.png" alt="No image">
+    {{/if}}
+  </div>
+
+  <div class="product-info">
+    <h5 class="price">₹{{this.price}}</h5>
+    <p class="title">{{this.name}}</p>
+    {{#if this.brand}}
+  <span class="brand">{{this.brand}}</span>
 {{/if}}
 
 
-      </div>
+    {{#if this.stock}}
+      <span class="badge bg-success">In Stock</span>
+    {{else}}
+      <span class="badge bg-danger">Out of Stock</span>
+    {{/if}}
+  </div>
 
-      <div class="product-info">
-        <h5 class="price">₹{{this.price}}</h5>
-        <p class="title">{{this.name}}</p>
-        <span class="brand">{{this.brand}}</span>
-        {{#if this.stock}}
-  <span class="badge bg-success">In Stock</span>
-{{else}}
-  <span class="badge bg-danger">Out of Stock</span>
-{{/if}}
+  <div class="actions">
+    <a href="/product/{{this._id}}" class="btn-outline">
+      Quick View
+    </a>
 
-      </div>
+    {{#if this.stock}}
+      <a href="/add-to-cart/{{this._id}}" class="btn-main">
+        Add to Cart
+      </a>
+    {{else}}
+      <button class="btn-main disabled-btn" disabled>
+        Out of Stock
+      </button>
+    {{/if}}
+  </div>
+</div>
 
-      <div class="actions">
-        <button class="btn-outline">Quick Shop</button>
-        <button class="btn-main">Add to Cart</button>
-      </div>
-    </div>
     <!-- END CARD -->
 {{/each}}
    

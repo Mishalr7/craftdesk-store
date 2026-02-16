@@ -44,9 +44,12 @@ cookie: {
 }
 }))
 
+
 app.use((req, res, next) => {
   res.locals.user = req.session.user;
   res.locals.loggedIn = req.session.loggedIn;
+  res.locals.cartCount = req.session.cart
+  ? req.session.cart.reduce((total, item) => total + item.quantity, 0): 0;
   next();
 });
 
