@@ -68,7 +68,12 @@
 
   {{#if user}}
     <!-- Logged in -->
-    <a href="/account" class="icon-tip" data-tip="My Account">
+    <a href="/account" class="icon-tip" data-tip=
+    "{{#if user}}
+      {{user.firstName}}
+      {{else}}
+      Account
+    {{/if}}">
       <i class="bi bi-person"></i>
     </a>
   {{else}}

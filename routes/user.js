@@ -2,6 +2,13 @@ var express = require('express');
 var router = express.Router();
 const productHelpers = require('../helpers/product-helpers');
 const userHelpers = require('../helpers/user-helpers');
+function verifyLogin(req,res,next){
+  if(req.session.loggedIn){
+    next();
+  }else{
+    res.redirect('/login');
+  }
+}
 
 router.get('/', (req, res) => {
   productHelpers.getAllProducts()
@@ -82,6 +89,9 @@ router.post('/login', (req, res) => {
       console.log(err)
       res.render('user/login', { loginError: true })
     })
+})
+router.get('/cart',(req,res)=>{
+  res.render('user/cart')
 })
 
 

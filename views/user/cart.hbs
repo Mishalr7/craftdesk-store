@@ -1,0 +1,41 @@
+<section class="cart-page container">
+
+  <h2 class="cart-title">Your Cart</h2>
+
+  {{#if cartProducts.length}}
+
+    <div class="cart-card">
+
+      {{#each cartProducts}}
+      <div class="cart-item">
+
+        <img src="/product-images/{{this.images.[0]}}" class="cart-img">
+
+        <div class="cart-info">
+          <h5>{{this.name}}</h5>
+          <p>₹{{this.price}}</p>
+          <p>Qty: {{this.quantity}}</p>
+        </div>
+
+      </div>
+      {{/each}}
+
+      <div class="cart-footer">
+        {{#if loggedIn}}
+          <a href="/checkout" class="btn-main">Proceed to Checkout</a>
+        {{else}}
+          <a href="/login" class="btn-main">Sign in to Continue</a>
+        {{/if}}
+      </div>
+
+    </div>
+
+  {{else}}
+    <div class="empty-cart">
+      <i class="bi bi-bag-x"></i>
+      <h4>Your cart is empty</h4>
+      <a href="/" class="btn-outline">Continue Shopping</a>
+    </div>
+  {{/if}}
+
+</section>

@@ -930,6 +930,7 @@ input[type="file"].admin-input-dark::-moz-file-upload-button {
   text-align:center;
   font-size:2rem;
   margin-bottom:30px;
+  padding-top: 12px;
 }
 
 .login-grid{
@@ -1223,4 +1224,57 @@ input[type="file"].admin-input-dark::-moz-file-upload-button {
 
 .password-toggle:hover {
   color: #26a69a; /* your teal */
+}
+.cart-page {
+  padding: 40px 15px;
+  min-height: 70vh;
+}
+
+.cart-title {
+  text-align: center;
+  color: #174d43;
+  margin-bottom: 30px;
+}
+
+.cart-card {
+  background: #fff;
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0,0,0,.08);
+}
+
+.cart-item {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.cart-img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.cart-info h5 {
+  margin: 0;
+  color: #174d43;
+}
+
+.cart-footer {
+  margin-top: 25px;
+  text-align: right;
+}
+
+.empty-cart {
+  text-align: center;
+  padding: 60px 0;
+  color: #174d43;
+}
+
+.empty-cart i {
+  font-size: 48px;
+  margin-bottom: 10px;
 }
