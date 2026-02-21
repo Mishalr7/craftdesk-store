@@ -91,20 +91,26 @@ router.get('/cart', async (req, res) => {
   const cart = req.session.cart || [];
 
   let cartProducts = [];
+  let subtotal=0;
 
   for (let item of cart) {
     const product = await productHelpers.getProductById(item.productId);
 
 if (product) {
+       const itemTotal = product.price * item.quantity;
+
+      subtotal += itemTotal;
   cartProducts.push({
     ...product,
-    quantity: item.quantity
+    quantity: item.quantity,
+    itemTotal
   });
 }
   }
 
   res.render('user/cart', {
     cartProducts,
+    subtotal,
     loggedIn: req.session.loggedIn
   });
 });
@@ -134,7 +140,33 @@ res.redirect(req.get("Referrer") || "/");
 router.get('/checkout', verifyLogin, (req, res) => {
   res.render('user/checkout');
 });
+router.get('/change-quantity/:id/:action', (req, res) => {
 
+  const productId = req.params.id;
+  const action = req.params.action;
+
+  const cart = req.session.cart || [];
+
+  const item = cart.find(p => p.productId === productId);
+
+  if (item) {
+    if (action === 'increase') {
+      item.quantity += 1;
+    }
+
+    if (action === 'decrease') {
+      if (item.quantity > 1) {
+        item.quantity -= 1;
+      }
+    }
+  }
+
+  res.redirect('/cart');
+});
+
+router.get('/blog', (req, res) => {
+  res.render('user/blog');
+});
 
 
 module.exports = router;

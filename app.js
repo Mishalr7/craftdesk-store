@@ -20,7 +20,8 @@ app.engine('hbs', engine({
   partialsDir: path.join(__dirname, 'views/partials'),
   helpers: {
     eq: (a, b) => a === b,
-    startsWith: (value, text) => value?.startsWith(text)
+    startsWith: (value, text) => value?.startsWith(text),
+    multiply: (a, b) => a * b
   }
 }));
 
@@ -76,5 +77,8 @@ app.use(function (err, req, res, next) {
     message: "Something broke... we're fixing it!"
   });
 });
+
+
+
 
 module.exports = app;

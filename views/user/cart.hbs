@@ -4,22 +4,51 @@
 
   {{#if cartProducts.length}}
 
-    <div class="cart-card">
+    <div class="cart-wrapper">
 
       {{#each cartProducts}}
       <div class="cart-item">
 
-        <img src="/product-images/{{this.images.[0]}}" class="cart-img">
+        <div class="cart-left">
+<div class="cart-img-wrapper">
+  {{#if this.images}}
+    {{#if (startsWith this.images.[0] "http")}}
+      <img src="{{this.images.[0]}}" alt="{{this.name}}" class="cart-img">
+    {{else}}
+      <img src="/product-images/{{this.images.[0]}}" alt="{{this.name}}" class="cart-img">
+    {{/if}}
+  {{else}}
+    <img src="/img/no-image.png" alt="No image" class="cart-img">
+  {{/if}}
+</div>
 
-        <div class="cart-info">
-          <h5>{{this.name}}</h5>
-          <p>₹{{this.price}}</p>
-          <p>Qty: {{this.quantity}}</p>
+        </div>
+
+        <div class="cart-middle">
+          <h5 class="cart-name">{{this.name}}</h5>
+          <p class="cart-price">₹{{this.price}}</p>
+          <div class="cart-qty-box">
+  <a href="/change-quantity/{{this._id}}/decrease" class="qty-btn">−</a>
+
+  <span class="qty-number">{{this.quantity}}</span>
+
+  <a href="/change-quantity/{{this._id}}/increase" class="qty-btn">+</a>
+</div>
+
+        </div>
+
+        <div class="cart-right">
+          <p class="cart-total">
+            ₹{{this.itemTotal}}
+          </p>
         </div>
 
       </div>
       {{/each}}
-
+     <div class="cart-summary">
+  <h5>Subtotal</h5>
+  <h4>₹{{subtotal}}</h4>
+</div>
       <div class="cart-footer">
         {{#if loggedIn}}
           <a href="/checkout" class="btn-main">Proceed to Checkout</a>
