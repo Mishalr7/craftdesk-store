@@ -57,7 +57,28 @@ deleteProduct: async (prodId) => {
       }
     });
   }
+,
 
+updateProduct: (productId, productDetails) => {
+  return new Promise(async (resolve, reject) => {
+
+    await db.get().collection(collection.PRODUCT_COLLECTION)
+      .updateOne(
+        { _id: new ObjectId(productId) },
+        {
+          $set: {
+            name: productDetails.name,
+            price: Number(productDetails.price),
+            brand: productDetails.brand,
+            stock: productDetails.stock
+          }
+        }
+      )
+
+    resolve()
+
+  })
+}
 };
 
 
