@@ -1,0 +1,101 @@
+<section class="account-wrap">
+
+  <div class="account-dashboard">
+
+    <div class="account-header">
+      <h2>My Orders</h2>
+      <p>Track and review your previous orders</p>
+    </div>
+
+    {{#if orders.length}}
+
+      <div class="orders-grid">
+
+        {{#each orders}}
+
+        <div class="address-card">
+
+          <div class="d-flex justify-content-between align-items-center mb-3">
+
+            <h4>
+              Order #{{@index}}
+            </h4>
+
+            <span class="badge bg-success">
+              {{this.status}}
+            </span>
+
+          </div>
+
+          <p>
+            <strong>Date:</strong>
+            {{this.date}}
+          </p>
+
+          <p>
+            <strong>Payment:</strong>
+            {{this.paymentMethod}}
+          </p>
+
+          <hr>
+
+          <h5>
+            Delivery Address
+          </h5>
+
+          <p>
+            <strong>{{this.deliveryDetails.fullName}}</strong>
+          </p>
+
+          <p>
+            {{this.deliveryDetails.address}}
+          </p>
+
+          <p>
+            {{this.deliveryDetails.city}},
+            {{this.deliveryDetails.state}}
+            -
+            {{this.deliveryDetails.pincode}}
+          </p>
+
+          <p>
+            {{this.deliveryDetails.phone}}
+          </p>
+
+          <hr>
+
+          <p>
+            <strong>
+              Items:
+            </strong>
+
+            {{this.products.length}}
+          </p>
+
+        </div>
+
+        {{/each}}
+
+      </div>
+
+    {{else}}
+
+      <div class="empty-address">
+
+        <h3>No Orders Yet</h3>
+
+        <p>
+          Start shopping and place your first order.
+        </p>
+
+        <a href="/" class="btn-main">
+          Shop Now
+        </a>
+
+      </div>
+
+    {{/if}}
+
+  </div>
+
+</section>

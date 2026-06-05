@@ -105,22 +105,52 @@ router.get('/delete-product/:id', async (req, res) => {
 });
 
 router.get('/edit-product/:id', async (req, res) => {
+
   const product = await productHelpers.getProductById(req.params.id);
+
   if (!product) {
     return res.status(404).render('admin/admin-404', { admin: true });
   }
-  res.render('admin/edit-product', { product, admin: true, activePage:'products' });
+
+  res.render('admin/edit-product', {
+    product,
+    admin: true,
+    activePage: 'products'
+  });
+
 });
 
-router.post('/edit-product/:id', (req, res) => {
-  productHelpers.updateProduct(req.params.id, req.body)
-    .then(() => {
-      res.redirect('/admin/products');
-    })
-    .catch(err => {
-      console.log(err);
-      res.status(500).send("Error updating product");
-    });
+router.post('/edit-product/:id', upload.array('images', 5), async (req, res) => {
+
+  try {
+
+    let images = [];
+
+    if (req.files && req.files.length > 0) {
+      images = req.files.map(file => file.filename);
+    }
+
+    else if (req.body.imageUrl?.trim()) {
+      images = [req.body.imageUrl.trim()];
+    }
+
+    req.body.stock = req.body.stock === "true";
+
+    await productHelpers.updateProduct(
+      req.params.id,
+      req.body,
+      images
+    );
+
+    res.redirect('/admin/products');
+
+  } catch (err) {
+
+    console.log(err);
+    res.status(500).send("Error updating product");
+
+  }
+
 });
 
 router.use((req,res)=>{

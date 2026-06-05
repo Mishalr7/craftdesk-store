@@ -1,0 +1,99 @@
+<section class="account-wrap">
+
+  <div class="address-form-card">
+
+    <div class="account-header">
+      <h2>Add Address</h2>
+      <p>Save a delivery address for future orders</p>
+    </div>
+    {{#if addressError}}
+  <p class="error-text">
+    {{addressError}}
+  </p>
+{{/if}}
+
+
+<form action="/add-address" method="POST">
+
+  <input
+    type="text"
+    name="fullName"
+    placeholder="Full Name"
+    minlength="3"
+    maxlength="50"
+    pattern="[A-Za-z.\- ]+"
+    title="Name can contain letters, spaces, dots and hyphens"
+    required
+  >
+
+  <input
+    type="tel"
+    name="phone"
+    placeholder="Phone Number"
+    pattern="[0-9]{10}"
+    maxlength="10"
+    title="Enter a valid 10 digit phone number"
+    required
+  >
+
+  <textarea
+    name="address"
+    placeholder="Full Address"
+    minlength="10"
+    maxlength="200"
+    required
+  ></textarea>
+
+  <div class="row-2">
+
+ <input
+  type="text"
+  name="city"
+  placeholder="City"
+  pattern="[A-Za-z.\- ]+"
+  minlength="2"
+  maxlength="50"
+  required
+>
+
+<select name="state" required>
+
+  <option value="Kerala" selected>Kerala</option>
+
+  <option value="Tamil Nadu">Tamil Nadu</option>
+
+  <option value="Karnataka">Karnataka</option>
+
+  <option value="Andhra Pradesh">Andhra Pradesh</option>
+
+  <option value="Telangana">Telangana</option>
+
+  <option value="Puducherry">Puducherry</option>
+
+</select>
+
+  </div>
+<small class="delivery-note">
+  Currently delivering across South India.
+</small>
+
+  <input
+   type="tel"
+name="pincode"
+inputmode="numeric"
+    placeholder="PIN Code"
+    pattern="[0-9]{6}"
+    maxlength="6"
+    title="Enter a valid 6 digit PIN code"
+    required
+  >
+
+  <button type="submit" class="btn-main">
+    Save Address
+  </button>
+
+</form>
+
+  </div>
+
+</section>

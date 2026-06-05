@@ -58,26 +58,54 @@ deleteProduct: async (prodId) => {
     });
   }
 ,
+updateProduct: (productId, productDetails, images = []) => {
 
-updateProduct: (productId, productDetails) => {
   return new Promise(async (resolve, reject) => {
 
-    await db.get().collection(collection.PRODUCT_COLLECTION)
-      .updateOne(
-        { _id: new ObjectId(productId) },
-        {
-          $set: {
-            name: productDetails.name,
-            price: Number(productDetails.price),
-            brand: productDetails.brand,
-            stock: productDetails.stock
+    try {
+
+      let updateData = {
+
+        name: productDetails.name,
+
+        price: Number(productDetails.price),
+
+        brand: productDetails.brand,
+
+        category: productDetails.category,
+
+        description: productDetails.description,
+
+        stock: productDetails.stock
+
+      };
+
+      // Update image only if new image exists
+      if (images.length > 0) {
+
+        updateData.images = images;
+
+      }
+
+      await db.get()
+        .collection(collection.PRODUCT_COLLECTION)
+        .updateOne(
+          { _id: new ObjectId(productId) },
+          {
+            $set: updateData
           }
-        }
-      )
+        );
 
-    resolve()
+      resolve();
 
-  })
+    } catch (err) {
+
+      reject(err);
+
+    }
+
+  });
+
 }
 };
 

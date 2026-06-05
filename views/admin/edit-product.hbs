@@ -1,31 +1,155 @@
-<section class="container mt-4">
+<section class="container py-4">
 
-  <h2>Edit Product</h2>
+  <div class="admin-products-card p-4">
 
-  <form action="/admin/edit-product/{{product._id}}" method="POST">
+    <h2 class="text-white fw-bold mb-4">Edit Product</h2>
 
-    <div class="mb-3">
-      <label>Product Name</label>
-      <input type="text" name="name" class="form-control" value="{{product.name}}">
-    </div>
+    <form action="/admin/edit-product/{{product._id}}" 
+          method="POST" 
+          enctype="multipart/form-data">
 
-    <div class="mb-3">
-      <label>Brand</label>
-      <input type="text" name="brand" class="form-control" value="{{product.brand}}">
-    </div>
+      <!-- Product Name -->
+      <div class="mb-3">
+        <label class="admin-muted">Product Name</label>
+        <input 
+          type="text"
+          name="name" 
+          class="form-control admin-input-dark"
+          value="{{product.name}}"
+          required>
+      </div>
 
-    <div class="mb-3">
-      <label>Price</label>
-      <input type="number" name="price" class="form-control" value="{{product.price}}">
-    </div>
+      <!-- Price -->
+      <div class="mb-3">
+        <label class="admin-muted">Price</label>
+        <input 
+          type="number" 
+          name="price" 
+          class="form-control admin-input-dark"
+          value="{{product.price}}"
+          required>
+      </div>
 
-    <div class="mb-3">
-      <label>Stock</label>
-      <input type="number" name="stock" class="form-control" value="{{product.stock}}">
-    </div>
+      <!-- Brand -->
+      <div class="mb-3">
+        <label class="admin-muted">Brand</label>
+        <input 
+          type="text"
+          name="brand" 
+          class="form-control admin-input-dark"
+          value="{{product.brand}}">
+      </div>
 
-    <button class="btn btn-primary">Update Product</button>
+      <!-- Category -->
+      <div class="mb-3">
+        <label class="admin-muted">Category</label>
+        <input 
+          type="text"
+          name="category" 
+          class="form-control admin-input-dark"
+          value="{{product.category}}">
+      </div>
 
-  </form>
+      <!-- Stock Status -->
+      <div class="mb-3">
+        <label class="admin-muted">Stock Status</label>
+
+        <select name="stock" class="form-control admin-input-dark">
+
+          <option value="true"
+            {{#if product.stock}}selected{{/if}}>
+            In Stock
+          </option>
+
+          <option value="false"
+            {{#unless product.stock}}selected{{/unless}}>
+            Out of Stock
+          </option>
+
+        </select>
+      </div>
+
+      <!-- Current Image -->
+      <div class="mb-3">
+
+        <label class="admin-muted d-block mb-2">
+          Current Image
+        </label>
+
+<img 
+  id="previewImg"
+  src="/product-images/{{product.images.[0]}}"
+  alt="Product Image"
+  style="
+    width:120px;
+    height:120px;
+    object-fit:cover;
+    border-radius:10px;
+    border:1px solid #1f2a44;
+  ">
+
+      </div>
+
+      <!-- Upload New Images -->
+      <div class="mb-3">
+        <label class="admin-muted">Change Images</label>
+
+   <input 
+  type="file"
+  name="images"
+  id="imageInput"
+  class="form-control admin-input-dark"
+  multiple>
+
+        <small class="admin-muted">
+          Leave empty if you don't want to change images
+        </small>
+      </div>
+
+      <!-- Image URL -->
+      <div class="mb-3">
+        <label class="admin-muted">Or New Image URL</label>
+
+        <input 
+          type="text"
+          name="imageUrl" 
+          class="form-control admin-input-dark"
+          placeholder="https://example.com/product.jpg">
+      </div>
+
+      <!-- Description -->
+      <div class="mb-3">
+        <label class="admin-muted">Description</label>
+
+        <textarea 
+          name="description"
+          class="form-control admin-input-dark"
+          rows="4">{{product.description}}</textarea>
+      </div>
+
+      <!-- Button -->
+      <button class="btn btn-primary px-4">
+        Update Product
+      </button>
+
+    </form>
+
+  </div>
 
 </section>
+<script>
+
+document.getElementById('imageInput').addEventListener('change', function(e){
+
+    const file = e.target.files[0];
+
+    if(file){
+
+            document.getElementById('previewImg').src = URL.createObjectURL(file);
+
+
+    }
+
+});
+
+</script>

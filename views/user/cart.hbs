@@ -11,11 +11,11 @@
 
         <div class="cart-left">
 <div class="cart-img-wrapper">
-  {{#if this.images}}
-    {{#if (startsWith this.images.[0] "http")}}
-      <img src="{{this.images.[0]}}" alt="{{this.name}}" class="cart-img">
+  {{#if this.product.images}}
+    {{#if (startsWith this.product.images.[0] "http")}}
+      <img src="{{this.product.images.[0]}}" alt="{{this.product.name}}" class="cart-img">
     {{else}}
-      <img src="/product-images/{{this.images.[0]}}" alt="{{this.name}}" class="cart-img">
+      <img src="/product-images/{{this.product.images.[0]}}" alt="{{this.product.name}}" class="cart-img">
     {{/if}}
   {{else}}
     <img src="/img/no-image.png" alt="No image" class="cart-img">
@@ -25,16 +25,23 @@
         </div>
 
         <div class="cart-middle">
-          <h5 class="cart-name">{{this.name}}</h5>
-          <p class="cart-price">₹{{this.price}}</p>
+          <h5 class="cart-name">{{this.product.name}}</h5>
+          <p class="cart-price">₹{{this.product.price}}</p>
           <div class="cart-qty-box">
-  <a href="/change-quantity/{{this._id}}/decrease" class="qty-btn">−</a>
+  <a href="/change-quantity/{{this.product._id}}/decrease" class="qty-btn">−</a>
 
   <span class="qty-number">{{this.quantity}}</span>
 
-  <a href="/change-quantity/{{this._id}}/increase" class="qty-btn">+</a>
+  <a href="/change-quantity/{{this.product._id}}/increase" class="qty-btn">+</a>
 </div>
+  <a
+    href="/remove-cart-item/{{this.product._id}}"
+    class="remove-item">
 
+    <i class="bi bi-trash"></i>
+    Remove
+
+  </a>
         </div>
 
         <div class="cart-right">
@@ -47,7 +54,7 @@
       {{/each}}
      <div class="cart-summary">
   <h5>Subtotal</h5>
-  <h4>₹{{subtotal}}</h4>
+  <h4 style="color:#ff8c42">₹{{subtotal}}</h4>
 </div>
       <div class="cart-footer">
         {{#if loggedIn}}

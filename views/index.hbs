@@ -42,9 +42,13 @@
     </a>
 
     {{#if this.stock}}
-      <a href="/add-to-cart/{{this._id}}" class="btn-main">
-        Add to Cart
-      </a>
+  <button
+  class="btn-main"
+  onclick="addToCart('{{this._id}}')">
+
+  Add to Cart
+
+</button>
     {{else}}
       <button class="btn-main disabled-btn" disabled>
         Out of Stock
@@ -61,3 +65,36 @@
 </div>
   </section>
 </main>
+<script>
+
+async function addToCart(productId){
+
+  try{
+
+    const response =
+      await fetch('/add-to-cart/' + productId)
+
+    const data = await response.json()
+
+    if(data.status){
+const badges =
+  document.querySelectorAll('.cart-badge')
+
+badges.forEach(badge => {
+
+  badge.innerText =
+    Number(badge.innerText) + 1
+
+})
+
+    }
+
+  }catch(err){
+
+    console.log(err)
+
+  }
+
+}
+
+</script>

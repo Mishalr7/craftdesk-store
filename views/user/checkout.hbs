@@ -1,0 +1,211 @@
+<section class="account-wrap">
+
+  <div class="account-dashboard">
+
+```
+<div class="account-header">
+  <h2>Checkout</h2>
+  <p>Review your delivery details and complete your order</p>
+</div>
+
+{{#if addresses.length}}
+
+<form action="/place-order" method="POST">
+
+  <div class="checkout-grid">
+
+    <!-- LEFT SIDE -->
+
+    <div>
+
+      <div class="checkout-section">
+
+        <div class="checkout-section-head">
+
+          <h3>Delivery Address</h3>
+
+          <a
+            href="/add-address"
+            class="btn-outline"
+          >
+            + Add Address
+          </a>
+
+        </div>
+
+        {{#each addresses}}
+
+        <div class="checkout-address-card">
+
+          <label class="checkout-label">
+
+            <input
+              type="radio"
+              name="addressId"
+              value="{{this._id}}"
+              {{#if this.isDefault}}checked{{/if}}
+              required
+            >
+
+            <div class="checkout-address-content">
+
+              <div class="checkout-address-top">
+
+                <strong>
+                  {{this.fullName}}
+                </strong>
+
+                {{#if this.isDefault}}
+                <span class="default-badge">
+                  Default
+                </span>
+                {{/if}}
+
+              </div>
+
+              <p>
+                {{this.address}}
+              </p>
+
+              <p>
+                {{this.city}},
+                {{this.state}}
+                - {{this.pincode}}
+              </p>
+
+              <p>
+                {{this.phone}}
+              </p>
+
+            </div>
+
+          </label>
+
+        </div>
+
+        {{/each}}
+
+      </div>
+
+      <div class="checkout-section">
+
+        <h3>Payment Method</h3>
+
+        <div class="checkout-payment-card">
+
+  <label>
+
+    <input
+      type="radio"
+      name="paymentMethod"
+      value="COD"
+      checked
+    >
+
+    Cash On Delivery
+
+  </label>
+
+</div>
+
+<div class="checkout-payment-card">
+
+  <label>
+
+    <input
+      type="radio"
+      name="paymentMethod"
+      value="ONLINE"
+      disabled
+    >
+
+    Online Payment (Coming Soon)
+
+  </label>
+
+</div>
+
+      </div>
+
+    </div>
+
+    <!-- RIGHT SIDE -->
+
+    <div>
+
+      <div class="checkout-summary">
+
+        <h3>Order Summary</h3>
+
+        <div class="summary-row">
+
+          <span>Subtotal</span>
+
+          <span>
+            ₹{{subtotal}}
+          </span>
+
+        </div>
+
+        <div class="summary-row">
+
+          <span>Shipping</span>
+
+          <span>
+            Free
+          </span>
+
+        </div>
+
+        <hr>
+
+        <div class="summary-total">
+
+          <span>Total</span>
+
+          <span>
+            ₹{{subtotal}}
+          </span>
+
+        </div>
+
+        <button
+          type="submit"
+          class="btn-main checkout-btn"
+        >
+          Place Order
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</form>
+
+{{else}}
+
+<div class="empty-address">
+
+  <h3>No Address Found</h3>
+
+  <p>
+    Add an address before placing an order.
+  </p>
+
+  <a
+    href="/add-address"
+    class="btn-main"
+  >
+    Add Address
+  </a>
+
+</div>
+
+{{/if}}
+```
+
+  </div>
+
+</section>

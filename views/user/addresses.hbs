@@ -1,0 +1,82 @@
+<section class="account-wrap">
+
+  <div class="account-dashboard">
+
+    <div class="account-header">
+      <h2>My Addresses</h2>
+      <p>Manage your delivery addresses</p>
+    </div>
+
+    <a href="/add-address" class="btn-main add-address-btn">
+      + Add New Address
+    </a>
+
+    <div class="address-grid">
+
+      {{#if addresses.length}}
+
+        {{#each addresses}}
+<div class="address-card">
+
+  {{#if this.isDefault}}
+    <span class="default-badge">
+      Default
+    </span>
+  {{/if}}
+
+  <h4>{{this.fullName}}</h4>
+
+  <p>{{this.address}}</p>
+
+  <p>{{this.city}}, {{this.state}}</p>
+
+  <p>PIN: {{this.pincode}}</p>
+
+  <p>Phone: {{this.phone}}</p>
+
+  <div class="address-actions">
+
+    {{#unless this.isDefault}}
+
+      <a
+        href="/set-default-address/{{this._id}}"
+        class="btn-outline">
+
+        Set Default
+
+      </a>
+
+    {{/unless}}
+
+    <a
+      href="/delete-address/{{this._id}}"
+      class="btn-outline">
+
+      Delete
+
+    </a>
+
+  </div>
+
+</div>
+        {{/each}}
+
+      {{else}}
+
+      <div class="empty-address">
+
+        <h3>No Addresses Found</h3>
+
+        <p>
+          Add your first address to speed up checkout.
+        </p>
+
+      </div>
+
+      {{/if}}
+
+    </div>
+
+  </div>
+
+</section>
