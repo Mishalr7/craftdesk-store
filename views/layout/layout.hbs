@@ -12,6 +12,15 @@
   <link rel='stylesheet' href='/stylesheets/style.css' />
 
   <script>
+    (function() {
+      const savedTheme = localStorage.getItem('theme');
+      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = savedTheme ? savedTheme : (systemPrefersDark ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-bs-theme', theme);
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+  <script>
 window.UX_FRICTION_API = "http://localhost:3001";
 window.UX_FRICTION_WEBSITE_ID = "a6d2b63c5138eb6c32b301ff1dab7671";
 </script>
@@ -57,6 +66,43 @@ window.UX_FRICTION_WEBSITE_ID = "a6d2b63c5138eb6c32b301ff1dab7671";
       }
     });
   }
+
+  function updateThemeUI(theme) {
+    document.documentElement.setAttribute('data-bs-theme', theme);
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+
+    const toggleBtns = document.querySelectorAll('.theme-toggle-btn');
+    toggleBtns.forEach(btn => {
+      const sunIcon = btn.querySelector('.sun-icon');
+      const moonIcon = btn.querySelector('.moon-icon');
+      const text = btn.querySelector('.theme-text');
+      if (theme === 'dark') {
+        btn.classList.add('is-dark');
+        if (sunIcon) sunIcon.style.display = 'none';
+        if (moonIcon) moonIcon.style.display = 'inline-block';
+        if (text) text.textContent = 'Light Mode';
+        btn.setAttribute('title', 'Switch to Light Mode');
+      } else {
+        btn.classList.remove('is-dark');
+        if (sunIcon) sunIcon.style.display = 'inline-block';
+        if (moonIcon) moonIcon.style.display = 'none';
+        if (text) text.textContent = 'Dark Mode';
+        btn.setAttribute('title', 'Switch to Dark Mode');
+      }
+    });
+  }
+
+  function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    updateThemeUI(newTheme);
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+    updateThemeUI(currentTheme);
+  });
 </script>
 
 

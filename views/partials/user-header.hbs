@@ -7,37 +7,14 @@
     <nav class="navbar navbar-expand-lg premium-nav shadow-sm">
       <div class="container">
 
-        <!-- Brand -->
+        <!-- 1. Brand (Far Left) -->
         <a class="navbar-brand fw-bold" href="/">
           <i class="bi bi-bag-check-fill me-2 brand-icon"></i>
           CraftDesk<span class="accent"> Online</span>
         </a>
 
-        <!-- Toggle -->
-        <div class="d-flex align-items-center gap-3">
-
-          <!-- CART ALWAYS VISIBLE -->
-          <a href="/cart" class="position-relative nav-cart d-lg-none">
-            <i class="bi bi-bag-fill"></i>
-            <span class="cart-badge">{{cartCount}}</span>
-          </a>
-
-          <!-- Toggle -->
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navBar">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-
-        </div>
-        <!-- Mobile Search Always Visible -->
-        <form class="search-area d-lg-none mt-2">
-          <input class="form-control" type="search" placeholder="Search products...">
-        </form>
-
-
-
+        <!-- 2. Navigation Menu & Desktop Search (Center / Middle on Desktop) -->
         <div class="collapse navbar-collapse" id="navBar">
-
-          <!-- Menu -->
           <ul class="navbar-nav me-auto">
             <li class="nav-item"><a class="nav-link active" href="/">Home</a></li>
 
@@ -56,46 +33,58 @@
             <li class="nav-item"><a class="nav-link" href="/blog">Blog</a></li>
           </ul>
 
-          <!-- Search -->
-          <!-- Search (Desktop) -->
+          <!-- Desktop Search -->
           <form class="d-flex me-3 search-area d-none d-lg-flex">
             <input class="form-control" type="search" placeholder="Search products...">
           </form>
+        </div>
 
+        <!-- 3. Header Utility Controls (Far Right on Desktop & Mobile) -->
+        <div class="d-flex align-items-center gap-2 gap-sm-3 header-controls ms-auto">
 
-          <!-- Icons -->
-<div class="d-flex gap-3 nav-icons">
+          <!-- Sleek Pill Theme Switch Button -->
+          <button type="button" class="theme-switch-pill theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle light and dark theme">
+            <span class="theme-pill-track">
+              <span class="theme-pill-thumb">
+                <i class="bi bi-sun-fill sun-icon"></i>
+                <i class="bi bi-moon-stars-fill moon-icon"></i>
+              </span>
+            </span>
+          </button>
 
-  {{#if user}}
-    <!-- Logged in -->
-    <a href="/account" class="icon-tip" data-tip=
-    "{{#if user}}
-      {{user.firstName}}
-      {{else}}
-      Account
-    {{/if}}">
-      <i class="bi bi-person"></i>
-    </a>
-  {{else}}
-    <!-- Logged out -->
-    <a href="/login" class="icon-tip" data-tip="Login">
-      <i class="bi bi-person"></i>
-    </a>
-  {{/if}}
+          <!-- User Account -->
+          {{#if user}}
+            <a href="/account" class="icon-tip nav-icon-link" data-tip="{{user.firstName}}">
+              <i class="bi bi-person"></i>
+            </a>
+          {{else}}
+            <a href="/login" class="icon-tip nav-icon-link" data-tip="Login">
+              <i class="bi bi-person"></i>
+            </a>
+          {{/if}}
 
-  <a href="#" class="icon-tip" data-tip="Wishlist">
-    <i class="bi bi-heart"></i>
-  </a>
+          <!-- Wishlist -->
+          <a href="#" class="icon-tip nav-icon-link d-none d-sm-inline-flex" data-tip="Wishlist">
+            <i class="bi bi-heart"></i>
+          </a>
 
-  <a href="/cart" class="position-relative nav-cart icon-tip" data-tip="Cart">
-    <i class="bi bi-bag-fill"></i>
-    <span class="cart-badge">{{cartCount}}</span>
-  </a>
+          <!-- Cart Badge -->
+          <a href="/cart" class="position-relative nav-cart icon-tip nav-icon-link" data-tip="Cart">
+            <i class="bi bi-bag-fill"></i>
+            <span class="cart-badge">{{cartCount}}</span>
+          </a>
 
-</div>
-
+          <!-- Hamburger Toggler (Mobile Only) -->
+          <button class="navbar-toggler ms-1" type="button" data-bs-toggle="collapse" data-bs-target="#navBar" aria-controls="navBar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
 
         </div>
+
+        <!-- 4. Mobile Search (Sub-row) -->
+        <form class="search-area d-lg-none mt-2 w-100">
+          <input class="form-control" type="search" placeholder="Search products...">
+        </form>
       </div>
     </nav>
 

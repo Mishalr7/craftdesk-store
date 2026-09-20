@@ -412,71 +412,104 @@ deleteAddress:(userId,addressId)=>{
   })
 
 },
-placeOrder:(userId,addressId,paymentMethod)=>{
+placeOrder:(userId,addressId,paymentMethod,paymentId=null,razorpayOrderId=null)=>{
 
   return new Promise(async(resolve,reject)=>{
 
-    let user =
+    try {
+      let user = await db.get()
+        .collection(collection.USER_COLLECTION)
+        .findOne({ _id: new ObjectId(userId) });
+
+      let cart = await db.get()
+        .collection(collection.CART_COLLECTION)
+        .findOne({ user: new ObjectId(userId) });
+
+      if (!cart || !cart.products || cart.products.length === 0) {
+        return reject('Cart is empty');
+      }
+
+      let address = null;
+      if (user && user.addresses) {
+        address = user.addresses.find(a => a._id.toString() === addressId);
+        if (!address && user.addresses.length > 0) {
+          address = user.addresses[0];
+        }
+      }
+
+      if (!address) {
+        address = {
+          fullName: user ? (user.name || user.firstName || user.email) : 'Customer',
+          phone: '',
+          address: 'No address provided',
+          city: '',
+          state: '',
+          pincode: ''
+        };
+      }
+
+      let totalAmount = 0;
+      let orderProducts = [];
+
+      for (let item of cart.products) {
+        let prodId = item.item || item._id;
+        let qty = Number(item.quantity) || 1;
+        if (prodId) {
+          let prod = await db.get()
+            .collection(collection.PRODUCT_COLLECTION)
+            .findOne({ _id: new ObjectId(prodId) });
+
+          if (prod) {
+            let price = Number(prod.price) || 0;
+            let itemTotal = price * qty;
+            totalAmount += itemTotal;
+
+            orderProducts.push({
+              item: prod._id,
+              name: prod.name,
+              price: price,
+              quantity: qty,
+              itemTotal: itemTotal,
+              brand: prod.brand || '',
+              images: prod.images || []
+            });
+          }
+        }
+      }
+
+      let orderObj = {
+        userId: new ObjectId(userId),
+        deliveryDetails: {
+          fullName: address.fullName || '',
+          phone: address.phone || '',
+          address: address.address || '',
+          city: address.city || '',
+          state: address.state || '',
+          pincode: address.pincode || ''
+        },
+        paymentMethod,
+        paymentId: paymentId || null,
+        razorpayOrderId: razorpayOrderId || null,
+        products: orderProducts,
+        totalAmount: totalAmount,
+        status: 'Placed',
+        paymentStatus: paymentMethod === 'ONLINE' ? 'Paid' : 'Pending',
+        date: new Date()
+      };
+
       await db.get()
-      .collection(collection.USER_COLLECTION)
-      .findOne({
-        _id:new ObjectId(userId)
-      })
+        .collection(collection.ORDER_COLLECTION)
+        .insertOne(orderObj);
 
-let cart = await db.get()
-.collection(collection.CART_COLLECTION)
-.findOne({
-  user:new ObjectId(userId)
-})
+      await db.get()
+        .collection(collection.CART_COLLECTION)
+        .deleteOne({ user: new ObjectId(userId) });
 
-if(!cart){
-  return reject('Cart is empty')
-}
-
-    let address =
-      user.addresses.find(
-        a => a._id.toString() === addressId
-      )
-
-    let orderObj = {
-
-      userId:new ObjectId(userId),
-
-      deliveryDetails:{
-
-        fullName:address.fullName,
-        phone:address.phone,
-        address:address.address,
-        city:address.city,
-        state:address.state,
-        pincode:address.pincode
-
-      },
-
-      paymentMethod,
-
-      products:cart.products,
-
-      status:
-        paymentMethod === 'COD'
-        ? 'Placed'
-        : 'Pending',
-
-      date:new Date()
-
+      resolve();
+    } catch (err) {
+      console.log("placeOrder error:", err);
+      reject(err);
     }
-
-    await db.get()
-    .collection(collection.ORDER_COLLECTION)
-    .insertOne(orderObj)
-
-    await db.get()
-    .collection(collection.CART_COLLECTION)
-    .deleteOne({
-      user:new ObjectId(userId)
-    })
-
-    resolve()
 
   })
 
@@ -486,22 +519,110 @@ getOrders:(userId)=>{
 
   return new Promise(async(resolve,reject)=>{
 
-    let orders =
-      await db.get()
-      .collection(collection.ORDER_COLLECTION)
-      .find({
+    try {
+      let orders = await db.get()
+        .collection(collection.ORDER_COLLECTION)
+        .find({ userId: new ObjectId(userId) })
+        .sort({ date: -1 })
+        .toArray();
 
-        userId:new ObjectId(userId)
+      for (let order of orders) {
+        if (order.date) {
+          try {
+            const d = new Date(order.date);
+            order.formattedDate = d.toLocaleDateString('en-IN', {
+              day: 'numeric',
+              month: 'short',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            });
+          } catch (e) {
+            order.formattedDate = String(order.date);
+          }
+        }
 
-      })
-      .sort({date:-1})
-      .toArray()
+        if (order._id) {
+          order.orderCode = order._id.toString().slice(-6).toUpperCase();
+        }
 
-    resolve(orders)
+        let calculatedTotal = 0;
+        let populatedProducts = [];
+
+        if (order.products && Array.isArray(order.products)) {
+          for (let p of order.products) {
+            let prod = null;
+            let prodId = null;
+
+            if (typeof p === 'object' && p !== null) {
+              prodId = p.item || p._id || p.productId;
+            } else {
+              prodId = p;
+            }
+
+            if (prodId) {
+              try {
+                prod = await db.get()
+                  .collection(collection.PRODUCT_COLLECTION)
+                  .findOne({ _id: new ObjectId(prodId) });
+              } catch (e) {
+                try {
+                  prod = await db.get()
+                    .collection(collection.PRODUCT_COLLECTION)
+                    .findOne({ _id: prodId });
+                } catch (err2) {}
+              }
+            }
+
+            let name = (p && p.name) ? p.name : (prod ? prod.name : 'Stationery Item');
+            let price = 0;
+            if (p && p.price !== undefined && p.price !== null) {
+              price = Number(p.price) || 0;
+            } else if (prod && prod.price !== undefined && prod.price !== null) {
+              price = Number(prod.price) || 0;
+            }
+
+            let qty = (p && p.quantity) ? (Number(p.quantity) || 1) : 1;
+            let itemTotal = (p && p.itemTotal) ? (Number(p.itemTotal) || (price * qty)) : (price * qty);
+            calculatedTotal += itemTotal;
+
+            let imageSrc = '/img/no-image.png';
+            let rawImages = (p && p.images && p.images.length) ? p.images : (prod ? prod.images : null);
+            if (rawImages) {
+              let firstImg = Array.isArray(rawImages) ? rawImages[0] : rawImages;
+              if (firstImg && typeof firstImg === 'string' && firstImg.trim().length > 0) {
+                if (firstImg.startsWith('http')) {
+                  imageSrc = firstImg;
+                } else {
+                  imageSrc = '/product-images/' + firstImg;
+                }
+              }
+            }
+
+            populatedProducts.push({
+              name,
+              price,
+              quantity: qty,
+              itemTotal,
+              brand: (p && p.brand) || (prod ? prod.brand : '') || '',
+              imageSrc
+            });
+          }
+        }
+
+        order.products = populatedProducts;
+        order.totalAmount = (order.totalAmount !== undefined && order.totalAmount !== null && order.totalAmount > 0) ? Number(order.totalAmount) : calculatedTotal;
+      }
+
+      resolve(orders);
+    } catch (err) {
+      console.log("getOrders error:", err);
+      reject(err);
+    }
 
   })
 
-},
+}
 
 
 }

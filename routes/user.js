@@ -2,6 +2,13 @@ var express = require('express');
 var router = express.Router();
 const productHelpers = require('../helpers/product-helpers');
 const userHelpers = require('../helpers/user-helpers');
+const Razorpay = require('razorpay');
+const crypto = require('crypto');
+
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET
+});
 
 function verifyLogin(req,res,next){
   if(req.session.loggedIn){
@@ -409,40 +416,95 @@ router.get(
   verifyLogin,
   async(req,res)=>{
 
-    let orders =
-      await userHelpers.getOrders(
-        req.session.user._id
-      )
-
-    res.render(
-      'user/my-orders',
-      {
-        orders,
-        user:req.session.user
-      }
+    let orders = await userHelpers.getOrders(
+      req.session.user._id
     )
 
-});
-router.get(
-  '/my-orders',
-  verifyLogin,
-  async(req,res)=>{
-
-    let orders =
-      await userHelpers.getOrders(
-        req.session.user._id
-      )
-
-    res.render(
-      'user/my-orders',
-      {
-        user:req.session.user,
-        orders
-      }
+    let cartCount = await userHelpers.getCartCount(
+      req.session.user._id
     )
+
+    res.render('user/my-orders', {
+      orders,
+      user: req.session.user,
+      cartCount
+    })
 
 });
 
+// Create Razorpay order
+router.post('/create-razorpay-order', verifyLogin, async (req, res) => {
+  try {
+    let cartProducts = await userHelpers.getCartProducts(req.session.user._id);
+    if (!cartProducts || cartProducts.length === 0) {
+      return res.status(400).json({ success: false, message: 'Your cart is empty' });
+    }
 
+    let subtotal = 0;
+    cartProducts.forEach(item => {
+      let price = Number(item.product.price) || 0;
+      let qty = Number(item.quantity) || 1;
+      subtotal += price * qty;
+    });
+
+    if (subtotal <= 0) {
+      return res.status(400).json({ success: false, message: 'Invalid cart total' });
+    }
+
+    const options = {
+      amount: Math.round(subtotal * 100), // convert to paise
+      currency: 'INR',
+      receipt: 'rcpt_' + Date.now().toString().slice(-8)
+    };
+
+    const order = await razorpay.orders.create(options);
+    res.json({
+      success: true,
+      order,
+      key: process.env.RAZORPAY_KEY_ID,
+      amount: subtotal
+    });
+  } catch (err) {
+    console.error('Razorpay order creation error:', err);
+    res.status(500).json({ success: false, message: 'Failed to create payment order' });
+  }
+});
+
+// Verify Razorpay payment and place order
+router.post('/verify-payment', verifyLogin, async (req, res) => {
+  try {
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, addressId } = req.body;
+
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !addressId) {
+      return res.status(400).json({ success: false, message: 'Missing payment verification details' });
+    }
+
+    // Verify signature
+    const body = razorpay_order_id + '|' + razorpay_payment_id;
+    const expectedSignature = crypto
+      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+      .update(body)
+      .digest('hex');
+
+    if (expectedSignature !== razorpay_signature) {
+      console.error('Razorpay signature verification failed');
+      return res.status(400).json({ success: false, message: 'Payment verification failed' });
+    }
+
+    // Place order
+    await userHelpers.placeOrder(
+      req.session.user._id,
+      addressId,
+      'ONLINE',
+      razorpay_payment_id,
+      razorpay_order_id
+    );
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Payment verification error:', err);
+    res.status(500).json({ success: false, message: 'Error processing order' });
+  }
+});
 
 module.exports = router;

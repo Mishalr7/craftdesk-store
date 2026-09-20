@@ -1,211 +1,279 @@
 <section class="account-wrap">
-
   <div class="account-dashboard">
 
-```
-<div class="account-header">
-  <h2>Checkout</h2>
-  <p>Review your delivery details and complete your order</p>
-</div>
+    <div class="account-header">
+      <h2>Checkout</h2>
+      <p>Review your delivery details and complete your order</p>
+    </div>
 
-{{#if addresses.length}}
+    {{#if addresses.length}}
 
-<form action="/place-order" method="POST">
+    <form id="checkout-form" action="/place-order" method="POST">
 
-  <div class="checkout-grid">
+      <div class="checkout-grid">
 
-    <!-- LEFT SIDE -->
+        <!-- LEFT SIDE -->
+        <div>
 
-    <div>
-
-      <div class="checkout-section">
-
-        <div class="checkout-section-head">
-
-          <h3>Delivery Address</h3>
-
-          <a
-            href="/add-address"
-            class="btn-outline"
-          >
-            + Add Address
-          </a>
-
-        </div>
-
-        {{#each addresses}}
-
-        <div class="checkout-address-card">
-
-          <label class="checkout-label">
-
-            <input
-              type="radio"
-              name="addressId"
-              value="{{this._id}}"
-              {{#if this.isDefault}}checked{{/if}}
-              required
-            >
-
-            <div class="checkout-address-content">
-
-              <div class="checkout-address-top">
-
-                <strong>
-                  {{this.fullName}}
-                </strong>
-
-                {{#if this.isDefault}}
-                <span class="default-badge">
-                  Default
-                </span>
-                {{/if}}
-
-              </div>
-
-              <p>
-                {{this.address}}
-              </p>
-
-              <p>
-                {{this.city}},
-                {{this.state}}
-                - {{this.pincode}}
-              </p>
-
-              <p>
-                {{this.phone}}
-              </p>
-
+          <div class="checkout-section">
+            <div class="checkout-section-head">
+              <h3>Delivery Address</h3>
+              <a href="/add-address" class="btn-outline">+ Add Address</a>
             </div>
 
-          </label>
+            {{#each addresses}}
+            <div class="checkout-address-card">
+              <label class="checkout-label">
+                <input type="radio" name="addressId" value="{{this._id}}" {{#if this.isDefault}}checked{{/if}} required>
+                <div class="checkout-address-content">
+                  <div class="checkout-address-top">
+                    <strong>{{this.fullName}}</strong>
+                    {{#if this.isDefault}}<span class="default-badge">Default</span>{{/if}}
+                  </div>
+                  <p>{{this.address}}</p>
+                  <p>{{this.city}}, {{this.state}} - {{this.pincode}}</p>
+                  <p>{{this.phone}}</p>
+                </div>
+              </label>
+            </div>
+            {{/each}}
+          </div>
+
+          <div class="checkout-section">
+            <h3>Payment Method</h3>
+
+            <div class="checkout-payment-card" onclick="document.getElementById('pay-online').checked=true">
+              <label class="checkout-label d-flex align-items-center justify-content-between w-100" style="cursor: pointer;">
+                <div class="d-flex align-items-center gap-3">
+                  <input type="radio" name="paymentMethod" value="ONLINE" id="pay-online" checked>
+                  <div>
+                    <strong class="d-block mb-1">Online Payment (Razorpay)</strong>
+                    <small class="text-muted">UPI, Cards (Debit/Credit), NetBanking, Wallets</small>
+                  </div>
+                </div>
+                <div class="payment-badges d-flex align-items-center gap-2 flex-wrap">
+                  <span class="badge bg-light text-dark border">UPI</span>
+                  <span class="badge bg-light text-dark border"><i class="bi bi-credit-card-2-front"></i> Cards</span>
+                  <span class="badge bg-success-subtle text-success border border-success-subtle">Instant</span>
+                </div>
+              </label>
+            </div>
+
+            <div class="checkout-payment-card" onclick="document.getElementById('pay-cod').checked=true">
+              <label class="checkout-label d-flex align-items-center justify-content-between w-100" style="cursor: pointer;">
+                <div class="d-flex align-items-center gap-3">
+                  <input type="radio" name="paymentMethod" value="COD" id="pay-cod">
+                  <div>
+                    <strong class="d-block mb-1">Cash on Delivery (COD)</strong>
+                    <small class="text-muted">Pay with cash when package arrives at your doorstep</small>
+                  </div>
+                </div>
+                <div>
+                  <span class="badge bg-light text-dark border"><i class="bi bi-cash-stack"></i> Cash</span>
+                </div>
+              </label>
+            </div>
+          </div>
 
         </div>
 
-        {{/each}}
+        <!-- RIGHT SIDE -->
+        <div>
+          <div class="checkout-summary">
+            <h3>Order Summary</h3>
+
+            <div class="summary-row">
+              <span>Subtotal</span>
+              <span>₹{{subtotal}}</span>
+            </div>
+
+            <div class="summary-row">
+              <span>Shipping</span>
+              <span class="text-success fw-semibold">Free</span>
+            </div>
+
+            <hr>
+
+            <div class="summary-total">
+              <span>Total</span>
+              <span>₹{{subtotal}}</span>
+            </div>
+
+            <button type="button" id="place-order-btn" class="btn-main checkout-btn">
+              Place Order
+            </button>
+          </div>
+        </div>
 
       </div>
 
-      <div class="checkout-section">
+    </form>
 
-        <h3>Payment Method</h3>
+    {{else}}
 
-        <div class="checkout-payment-card">
-
-  <label>
-
-    <input
-      type="radio"
-      name="paymentMethod"
-      value="COD"
-      checked
-    >
-
-    Cash On Delivery
-
-  </label>
-
-</div>
-
-<div class="checkout-payment-card">
-
-  <label>
-
-    <input
-      type="radio"
-      name="paymentMethod"
-      value="ONLINE"
-      disabled
-    >
-
-    Online Payment (Coming Soon)
-
-  </label>
-
-</div>
-
-      </div>
-
+    <div class="empty-address">
+      <h3>No Address Found</h3>
+      <p>Add an address before placing an order.</p>
+      <a href="/add-address" class="btn-main">Add Address</a>
     </div>
 
-    <!-- RIGHT SIDE -->
-
-    <div>
-
-      <div class="checkout-summary">
-
-        <h3>Order Summary</h3>
-
-        <div class="summary-row">
-
-          <span>Subtotal</span>
-
-          <span>
-            ₹{{subtotal}}
-          </span>
-
-        </div>
-
-        <div class="summary-row">
-
-          <span>Shipping</span>
-
-          <span>
-            Free
-          </span>
-
-        </div>
-
-        <hr>
-
-        <div class="summary-total">
-
-          <span>Total</span>
-
-          <span>
-            ₹{{subtotal}}
-          </span>
-
-        </div>
-
-        <button
-          type="submit"
-          class="btn-main checkout-btn"
-        >
-          Place Order
-        </button>
-
-      </div>
-
-    </div>
+    {{/if}}
 
   </div>
-
-</form>
-
-{{else}}
-
-<div class="empty-address">
-
-  <h3>No Address Found</h3>
-
-  <p>
-    Add an address before placing an order.
-  </p>
-
-  <a
-    href="/add-address"
-    class="btn-main"
-  >
-    Add Address
-  </a>
-
-</div>
-
-{{/if}}
-```
-
-  </div>
-
 </section>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  document.getElementById('place-order-btn').addEventListener('click', async function () {
+    var btn = this;
+    var paymentMethodInput = document.querySelector('input[name="paymentMethod"]:checked');
+    var addressInput = document.querySelector('input[name="addressId"]:checked');
+
+    if (!addressInput) {
+      if (typeof Swal !== 'undefined') {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Delivery Address Required',
+          text: 'Please select a delivery address.'
+        });
+      } else {
+        alert('Please select a delivery address.');
+      }
+      return;
+    }
+
+    var addressId = addressInput.value;
+    var paymentMethod = paymentMethodInput ? paymentMethodInput.value : 'COD';
+
+    if (paymentMethod === 'COD') {
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Placing Order...';
+      var form = document.getElementById('checkout-form');
+      form.submit();
+      return;
+    }
+
+    // ONLINE - Razorpay
+    btn.disabled = true;
+    var originalBtnText = btn.innerHTML;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Connecting to Razorpay...';
+
+    function resetButton() {
+      btn.disabled = false;
+      btn.innerHTML = originalBtnText;
+    }
+
+    try {
+      var res = await fetch('/create-razorpay-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({})
+      });
+
+      var data = await res.json();
+
+      if (!data.success) {
+        resetButton();
+        if (typeof Swal !== 'undefined') {
+          Swal.fire({
+            icon: 'error',
+            title: 'Payment Error',
+            text: data.message || 'Failed to initiate payment. Please try again.'
+          });
+        } else {
+          alert(data.message || 'Failed to initiate payment. Try again.');
+        }
+        return;
+      }
+
+      // Prefill contact phone from selected address card
+      var addressCard = addressInput.closest('.checkout-address-card');
+      var addressPhone = '';
+      if (addressCard) {
+        var pTags = addressCard.querySelectorAll('p');
+        if (pTags.length > 0) {
+          addressPhone = pTags[pTags.length - 1].textContent.trim();
+        }
+      }
+
+      var options = {
+        key: data.key,
+        amount: data.order.amount,
+        currency: data.order.currency || 'INR',
+        name: 'CraftDesk Store',
+        description: 'Order Checkout Payment',
+        order_id: data.order.id,
+        handler: async function (response) {
+          btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Verifying Payment...';
+          try {
+            var verifyRes = await fetch('/verify-payment', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                addressId: addressId
+              })
+            });
+
+            var verifyData = await verifyRes.json();
+
+            if (verifyData.success) {
+              window.location.href = '/order-success';
+            } else {
+              resetButton();
+              if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Verification Failed',
+                  text: verifyData.message || 'Payment verification failed. Please contact support.'
+                });
+              } else {
+                alert('Payment verification failed. Contact support.');
+              }
+            }
+          } catch (vErr) {
+            resetButton();
+            console.error('Verify error:', vErr);
+            alert('An error occurred during payment verification.');
+          }
+        },
+        modal: {
+          ondismiss: function () {
+            resetButton();
+          }
+        },
+        prefill: {
+          name: '{{#if user.name}}{{user.name}}{{else if user.firstName}}{{user.firstName}} {{user.lastName}}{{/if}}',
+          email: '{{user.email}}',
+          contact: addressPhone
+        },
+        theme: {
+          color: '#0d9488'
+        }
+      };
+
+      var rzp = new Razorpay(options);
+
+      rzp.on('payment.failed', function (failResponse) {
+        resetButton();
+        if (typeof Swal !== 'undefined') {
+          Swal.fire({
+            icon: 'error',
+            title: 'Payment Failed',
+            text: (failResponse.error && failResponse.error.description) ? failResponse.error.description : 'The payment could not be processed.'
+          });
+        } else {
+          alert('Payment Failed: ' + ((failResponse.error && failResponse.error.description) ? failResponse.error.description : 'Please try again.'));
+        }
+      });
+
+      rzp.open();
+    } catch (err) {
+      resetButton();
+      console.error('Payment flow error:', err);
+      alert('Could not start payment. Please check your connection.');
+    }
+  });
+</script>

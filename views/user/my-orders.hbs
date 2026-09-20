@@ -2,77 +2,100 @@
 
   <div class="account-dashboard">
 
-    <div class="account-header">
-      <h2>My Orders</h2>
-      <p>Track and review your previous orders</p>
+    <div class="account-header d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+      <div>
+        <h2>My Orders</h2>
+        <p class="mb-0">Track and review your previous orders</p>
+      </div>
+      <a href="/" class="btn-outline btn-sm">
+        <i class="bi bi-bag-plus me-1"></i> Continue Shopping
+      </a>
     </div>
 
     {{#if orders.length}}
 
-      <div class="orders-grid">
+      <div class="orders-list">
 
         {{#each orders}}
 
-        <div class="address-card">
+          <div class="order-card mb-4">
 
-          <div class="d-flex justify-content-between align-items-center mb-3">
+            <!-- ORDER HEADER -->
+            <div class="order-card-header d-flex justify-content-between align-items-center flex-wrap gap-2 p-3">
+              <div>
+                <h4 class="order-id-title mb-1">
+                  Order #{{#if this.orderCode}}{{this.orderCode}}{{else}}{{@index}}{{/if}}
+                </h4>
+                <div class="order-meta-info text-muted small">
+                  <span><i class="bi bi-calendar3 me-1"></i>{{#if this.formattedDate}}{{this.formattedDate}}{{else}}{{this.date}}{{/if}}</span>
+                </div>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <span class="badge order-status-badge status-{{this.status}}">
+                  {{this.status}}
+                </span>
+              </div>
+            </div>
 
-            <h4>
-              Order #{{@index}}
-            </h4>
+            <!-- ORDER SUMMARY META GRID -->
+            <div class="order-meta-grid p-3">
+              <div class="meta-item">
+                <span class="meta-label">Total Amount</span>
+                <span class="meta-value order-price">₹{{this.totalAmount}}</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Payment</span>
+                <span class="meta-value">
+                  {{#if (eq this.paymentMethod "ONLINE")}}
+                    <span class="badge bg-success-subtle text-success border border-success-subtle">
+                      <i class="bi bi-shield-check me-1"></i>Online (Paid)
+                    </span>
+                    {{#if this.paymentId}}
+                      <small class="text-muted d-block mt-1 font-monospace" style="font-size: 0.72rem;">Ref: {{this.paymentId}}</small>
+                    {{/if}}
+                  {{else}}
+                    <span class="badge bg-light text-dark border">
+                      <i class="bi bi-cash-stack me-1"></i>Cash on Delivery
+                    </span>
+                  {{/if}}
+                </span>
+              </div>
+              <div class="meta-item flex-grow-1">
+                <span class="meta-label">Delivered To</span>
+                <span class="meta-value">
+                  <strong>{{this.deliveryDetails.fullName}}</strong> ({{this.deliveryDetails.phone}})<br>
+                  <small>{{this.deliveryDetails.address}}, {{this.deliveryDetails.city}}, {{this.deliveryDetails.state}} - {{this.deliveryDetails.pincode}}</small>
+                </span>
+              </div>
+            </div>
 
-            <span class="badge bg-success">
-              {{this.status}}
-            </span>
+            <!-- ORDER ITEMS LIST -->
+            <div class="order-items-container p-3">
+              <h6 class="items-heading mb-3"><i class="bi bi-box-seam me-1"></i> Items in this order ({{this.products.length}})</h6>
+              
+              <div class="order-products-grid">
+                {{#each this.products}}
+                  <div class="order-product-item">
+                    <div class="product-thumb">
+                      <img src="{{this.imageSrc}}" alt="{{this.name}}">
+                    </div>
+                    <div class="product-details">
+                      <h6 class="product-name mb-1">{{this.name}}</h6>
+                      {{#if this.brand}}
+                        <span class="product-brand small text-muted d-block mb-1">{{this.brand}}</span>
+                      {{/if}}
+                      <div class="product-pricing">
+                        <span class="qty-tag me-2">Qty: {{this.quantity}}</span>
+                        <span class="unit-price text-muted me-2">₹{{this.price}} each</span>
+                        <strong class="item-total text-accent">₹{{this.itemTotal}}</strong>
+                      </div>
+                    </div>
+                  </div>
+                {{/each}}
+              </div>
+            </div>
 
           </div>
-
-          <p>
-            <strong>Date:</strong>
-            {{this.date}}
-          </p>
-
-          <p>
-            <strong>Payment:</strong>
-            {{this.paymentMethod}}
-          </p>
-
-          <hr>
-
-          <h5>
-            Delivery Address
-          </h5>
-
-          <p>
-            <strong>{{this.deliveryDetails.fullName}}</strong>
-          </p>
-
-          <p>
-            {{this.deliveryDetails.address}}
-          </p>
-
-          <p>
-            {{this.deliveryDetails.city}},
-            {{this.deliveryDetails.state}}
-            -
-            {{this.deliveryDetails.pincode}}
-          </p>
-
-          <p>
-            {{this.deliveryDetails.phone}}
-          </p>
-
-          <hr>
-
-          <p>
-            <strong>
-              Items:
-            </strong>
-
-            {{this.products.length}}
-          </p>
-
-        </div>
 
         {{/each}}
 
@@ -80,18 +103,13 @@
 
     {{else}}
 
-      <div class="empty-address">
-
+      <div class="empty-address text-center p-5">
+        <i class="bi bi-bag-x fs-1 text-muted d-block mb-3"></i>
         <h3>No Orders Yet</h3>
-
-        <p>
-          Start shopping and place your first order.
-        </p>
-
-        <a href="/" class="btn-main">
+        <p class="text-muted mb-4">Start shopping and place your first order.</p>
+        <a href="/" class="btn-main px-4 py-2">
           Shop Now
         </a>
-
       </div>
 
     {{/if}}
