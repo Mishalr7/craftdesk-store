@@ -19,15 +19,28 @@
           required>
       </div>
 
-      <!-- Price -->
-      <div class="mb-3">
-        <label class="admin-muted">Price</label>
-        <input 
-          type="number" 
-          name="price" 
-          class="form-control admin-input-dark"
-          value="{{product.price}}"
-          required>
+      <!-- Price & Original Price -->
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <label class="admin-muted">Selling / Offer Price (₹)</label>
+          <input 
+            type="number" 
+            min="0"
+            name="price" 
+            class="form-control admin-input-dark"
+            value="{{product.price}}"
+            required>
+        </div>
+        <div class="col-md-6">
+          <label class="admin-muted">Original Price / MRP (₹) <small>(optional, for Offers)</small></label>
+          <input 
+            type="number" 
+            min="0"
+            name="originalPrice" 
+            class="form-control admin-input-dark"
+            value="{{product.originalPrice}}"
+            placeholder="Leave blank if no offer">
+        </div>
       </div>
 
       <!-- Brand -->
@@ -42,79 +55,103 @@
 
       <!-- Category -->
       <div class="mb-3">
-        <label class="admin-muted">Category</label>
-        <input 
-          type="text"
-          name="category" 
-          class="form-control admin-input-dark"
-          value="{{product.category}}">
-      </div>
-
-      <!-- Stock Status -->
-      <div class="mb-3">
-        <label class="admin-muted">Stock Status</label>
-
-        <select name="stock" class="form-control admin-input-dark">
-
-          <option value="true"
-            {{#if product.stock}}selected{{/if}}>
-            In Stock
-          </option>
-
-          <option value="false"
-            {{#unless product.stock}}selected{{/unless}}>
-            Out of Stock
-          </option>
-
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <label class="admin-muted mb-0">Category</label>
+          <a href="/admin/categories" class="small text-info text-decoration-none">+ Manage Categories</a>
+        </div>
+        <select name="category" class="form-control admin-input-dark" required>
+          {{#each categories}}
+            <option value="{{this.name}}" {{#if (eq this.name ../product.category)}}selected{{/if}}>{{this.name}}</option>
+          {{/each}}
         </select>
       </div>
 
-      <!-- Current Image -->
-      <div class="mb-3">
+      <!-- Stock Quantity & Status -->
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <label class="admin-muted">Stock Quantity</label>
+          <input 
+            type="number"
+            min="0"
+            name="stockCount" 
+            class="form-control admin-input-dark"
+            value="{{#if (eq product.stockCount undefined)}}10{{else}}{{product.stockCount}}{{/if}}"
+            required>
+        </div>
+        <div class="col-md-6">
+          <label class="admin-muted">Stock Status</label>
 
-        <label class="admin-muted d-block mb-2">
-          Current Image
-        </label>
+          <select name="stock" class="form-control admin-input-dark">
 
-<img 
-  id="previewImg"
-  src="/product-images/{{product.images.[0]}}"
-  alt="Product Image"
-  style="
-    width:120px;
-    height:120px;
-    object-fit:cover;
-    border-radius:10px;
-    border:1px solid #1f2a44;
-  ">
+            <option value="true"
+              {{#if product.stock}}selected{{/if}}>
+              In Stock
+            </option>
 
+            <option value="false"
+              {{#unless product.stock}}selected{{/unless}}>
+              Out of Stock
+            </option>
+
+          </select>
+        </div>
       </div>
 
-      <!-- Upload New Images -->
-      <div class="mb-3">
-        <label class="admin-muted">Change Images</label>
-
-   <input 
-  type="file"
-  name="images"
-  id="imageInput"
-  class="form-control admin-input-dark"
-  multiple>
-
-        <small class="admin-muted">
-          Leave empty if you don't want to change images
-        </small>
+      <!-- Featured Toggle -->
+      <div class="form-check form-switch mb-3">
+        <input class="form-check-input" type="checkbox" id="isFeatured" name="isFeatured" {{#if product.isFeatured}}checked{{/if}}>
+        <label class="form-check-label admin-muted" for="isFeatured">Feature on Home Page (shown first)</label>
       </div>
 
-      <!-- Image URL -->
-      <div class="mb-3">
-        <label class="admin-muted">Or New Image URL</label>
+      <!-- Existing Images Manager -->
+      <div class="p-3 mb-3 rounded" style="background: rgba(255,255,255,0.03); border: 1px solid #1f2a44;">
+        <h6 class="text-white fw-semibold mb-3"><i class="bi bi-images me-2 text-info"></i>Current Images (Select Main Cover or Remove)</h6>
+        {{#if product.images.length}}
+          <div class="d-flex gap-3 flex-wrap">
+            {{#each product.images}}
+              <div class="p-2 rounded text-center" style="border: 1px solid #1f2a44; background: #0b1626; width: 145px;">
+                {{#if (startsWith this "http")}}
+                  <img src="{{this}}" alt="Product Image" style="width: 110px; height: 110px; object-fit: cover; border-radius: 8px;" class="mb-2">
+                {{else}}
+                  <img src="/product-images/{{this}}" alt="Product Image" style="width: 110px; height: 110px; object-fit: cover; border-radius: 8px;" class="mb-2">
+                {{/if}}
+                <div class="form-check text-start small">
+                  <input class="form-check-input" type="radio" name="mainImageName" value="{{this}}" id="main-{{@index}}" {{#if @first}}checked{{/if}}>
+                  <label class="form-check-label admin-muted" for="main-{{@index}}">Main Cover</label>
+                </div>
+                <div class="form-check text-start small">
+                  <input class="form-check-input" type="checkbox" name="removeImages" value="{{this}}" id="rem-{{@index}}">
+                  <label class="form-check-label text-danger" for="rem-{{@index}}">Remove</label>
+                </div>
+              </div>
+            {{/each}}
+          </div>
+        {{else}}
+          <p class="admin-muted mb-0">No images currently saved.</p>
+        {{/if}}
+      </div>
 
-        <input 
-          type="text"
-          name="imageUrl" 
-          class="form-control admin-input-dark"
-          placeholder="https://example.com/product.jpg">
+      <!-- Replace / Add Main Image -->
+      <div class="p-3 mb-3 rounded" style="background: rgba(255,255,255,0.03); border: 1px solid #1f2a44;">
+        <h6 class="text-white fw-semibold mb-2">Upload New Main Cover Image (Optional)</h6>
+        <div class="mb-2">
+          <input type="file" name="mainImage" id="imageInput" accept="image/*" class="form-control admin-input-dark">
+          <small class="admin-muted">Leave empty to keep your selected Main Cover above</small>
+        </div>
+        <div>
+          <input type="text" name="mainImageUrl" class="form-control admin-input-dark" placeholder="Or paste new Main Cover Image URL">
+        </div>
+      </div>
+
+      <!-- Add More Gallery Images -->
+      <div class="p-3 mb-3 rounded" style="background: rgba(255,255,255,0.03); border: 1px solid #1f2a44;">
+        <h6 class="text-white fw-semibold mb-2">Add More Gallery Images (Optional)</h6>
+        <div class="mb-2">
+          <input type="file" name="galleryImages" accept="image/*" class="form-control admin-input-dark" multiple>
+        </div>
+        <div>
+          <textarea name="galleryImageUrls" class="form-control admin-input-dark" rows="2" placeholder="Or paste extra Image URLs (one per line or comma-separated)"></textarea>
+        </div>
       </div>
 
       <!-- Description -->
@@ -138,18 +175,11 @@
 
 </section>
 <script>
-
-document.getElementById('imageInput').addEventListener('change', function(e){
-
+document.getElementById('imageInput')?.addEventListener('change', function(e){
     const file = e.target.files[0];
-
-    if(file){
-
-            document.getElementById('previewImg').src = URL.createObjectURL(file);
-
-
+    const preview = document.getElementById('previewImg');
+    if(file && preview){
+      preview.src = URL.createObjectURL(file);
     }
-
 });
-
 </script>

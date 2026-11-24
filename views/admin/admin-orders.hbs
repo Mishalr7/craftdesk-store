@@ -1,0 +1,205 @@
+<section class="container py-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+      <h2 class="admin-title mb-1">All Orders</h2>
+      <p class="admin-subtitle mb-0">Manage orders, update status, and process Razorpay refunds</p>
+    </div>
+    <span class="badge bg-primary fs-6">{{orders.length}} Orders</span>
+  </div>
+
+  {{#if orders.length}}
+
+  <div class="mb-3" style="max-width: 420px;">
+    <div class="input-group">
+      <span class="input-group-text bg-dark text-white border-0">
+        <i class="bi bi-search"></i>
+      </span>
+      <input type="text" id="admin-order-search" class="form-control admin-search-input admin-muted-input" placeholder="Search by Order #, customer, email, or phone...">
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-hover align-middle admin-table">
+      <thead class="table-dark">
+        <tr>
+          <th>Order #</th>
+          <th>Date</th>
+          <th>Customer</th>
+          <th>Items</th>
+          <th>Total</th>
+          <th>Payment</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each orders}}
+        <tr id="order-row-{{this._id}}">
+
+          <td>
+            <span class="fw-bold font-monospace text-accent">#{{this.orderCode}}</span>
+            {{#if this.paymentId}}
+              <br><small class="text-muted" style="font-size:0.7rem;">rzp: {{this.paymentId}}</small>
+            {{/if}}
+          </td>
+
+          <td><small>{{this.formattedDate}}</small></td>
+
+          <td>
+            <strong>{{this.deliveryDetails.fullName}}</strong><br>
+            {{#if this.customerEmail}}
+              <small class="text-muted">{{this.customerEmail}}</small><br>
+            {{/if}}
+            <small class="text-muted">{{this.deliveryDetails.phone}}</small><br>
+            <small class="text-muted">{{this.deliveryDetails.city}}, {{this.deliveryDetails.state}}</small>
+          </td>
+
+          <td>
+            {{#each this.products}}
+              <div class="d-flex align-items-center gap-1 mb-1">
+                <small>{{this.name}} x {{this.quantity}}</small>
+              </div>
+            {{/each}}
+          </td>
+
+          <td><strong class="text-accent">Rs.{{this.totalAmount}}</strong></td>
+
+          <td>
+            {{#if this.isOnline}}
+              {{#if this.isRefunded}}
+                <span class="badge bg-secondary">Refunded</span>
+                {{#if this.refundId}}
+                  <br><small class="text-muted font-monospace" style="font-size:0.68rem;">{{this.refundId}}</small>
+                {{/if}}
+              {{else if this.isPaid}}
+                <span class="badge bg-success">Online - Paid</span>
+              {{else}}
+                <span class="badge bg-danger">Online - Unpaid</span>
+              {{/if}}
+            {{else}}
+              <span class="badge bg-light text-dark border">COD</span>
+            {{/if}}
+          </td>
+
+          <td>
+            <select class="form-select form-select-sm order-status-select" data-order-id="{{this._id}}" style="min-width:130px;">
+              <option value="Placed"         {{#if (eq this.status "Placed")}}selected{{/if}}>Placed</option>
+              <option value="Processing"     {{#if (eq this.status "Processing")}}selected{{/if}}>Processing</option>
+              <option value="Shipped"        {{#if (eq this.status "Shipped")}}selected{{/if}}>Shipped</option>
+              <option value="Delivered"      {{#if (eq this.status "Delivered")}}selected{{/if}}>Delivered</option>
+              <option value="Cancelled"      {{#if (eq this.status "Cancelled")}}selected{{/if}}>Cancelled</option>
+              <option value="Refunded"       {{#if (eq this.status "Refunded")}}selected{{/if}}>Refunded</option>
+              <option value="Payment Failed" {{#if (eq this.status "Payment Failed")}}selected{{/if}}>Payment Failed</option>
+            </select>
+          </td>
+
+          <td>
+            <div class="d-flex gap-2 flex-wrap">
+              <button class="btn btn-sm btn-outline-primary save-status-btn" data-order-id="{{this._id}}">
+                <i class="bi bi-check2"></i> Save
+              </button>
+              {{#if this.canRefund}}
+              <button class="btn btn-sm btn-outline-danger refund-btn"
+                data-order-id="{{this._id}}"
+                data-order-code="{{this.orderCode}}"
+                data-amount="{{this.totalAmount}}">
+                <i class="bi bi-arrow-counterclockwise"></i> Refund
+              </button>
+              {{/if}}
+            </div>
+          </td>
+
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+
+  {{else}}
+
+  <div class="text-center py-5">
+    <i class="bi bi-inbox fs-1 text-muted d-block mb-3"></i>
+    <h4 class="text-muted">No orders yet</h4>
+    <p class="text-muted">Orders placed by customers will appear here.</p>
+  </div>
+
+  {{/if}}
+
+</section>
+
+<script>
+  document.querySelectorAll(".save-status-btn").forEach(function(btn) {
+    btn.addEventListener("click", async function() {
+      var orderId = this.getAttribute("data-order-id");
+      var select = document.querySelector(".order-status-select[data-order-id=\"" + orderId + "\"]");
+      var status = select.value;
+      btn.disabled = true;
+      btn.innerHTML = "<span class=\"spinner-border spinner-border-sm\"></span>";
+      try {
+        var res = await fetch("/admin/update-order-status/" + orderId, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: status })
+        });
+        var data = await res.json();
+        if (data.success) {
+          btn.innerHTML = "<i class=\"bi bi-check2-circle text-success\"></i> Saved";
+          setTimeout(function() { btn.disabled = false; btn.innerHTML = "<i class=\"bi bi-check2\"></i> Save"; }, 2000);
+        } else {
+          btn.disabled = false; btn.innerHTML = "<i class=\"bi bi-check2\"></i> Save";
+          alert("Failed to update status");
+        }
+      } catch(e) {
+        btn.disabled = false; btn.innerHTML = "<i class=\"bi bi-check2\"></i> Save";
+        alert("Error: " + e.message);
+      }
+    });
+  });
+
+  document.querySelectorAll(".refund-btn").forEach(function(btn) {
+    btn.addEventListener("click", async function() {
+      var orderId = this.getAttribute("data-order-id");
+      var orderCode = this.getAttribute("data-order-code");
+      var amount = this.getAttribute("data-amount");
+      var confirmed = confirm("Initiate FULL refund of Rs." + amount + " for Order #" + orderCode + "?\n\nThis will trigger a real Razorpay refund and cannot be undone.");
+      if (!confirmed) return;
+      btn.disabled = true;
+      btn.innerHTML = "<span class=\"spinner-border spinner-border-sm\"></span> Refunding...";
+      try {
+        var res = await fetch("/admin/refund-order/" + orderId, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" }
+        });
+        var data = await res.json();
+        if (data.success) {
+          btn.innerHTML = "<i class=\"bi bi-check2-circle text-success\"></i> Refunded";
+          btn.classList.remove("btn-outline-danger");
+          btn.classList.add("btn-outline-success");
+          var row = document.getElementById("order-row-" + orderId);
+          if (row) {
+            var paymentCell = row.querySelector("td:nth-child(6)");
+            if (paymentCell) {
+              paymentCell.innerHTML = "<span class=\"badge bg-secondary\">Refunded</span>";
+              if (data.refundId) paymentCell.innerHTML += "<br><small class=\"text-muted font-monospace\" style=\"font-size:0.68rem;\">" + data.refundId + "</small>";
+            }
+          }
+        } else {
+          btn.disabled = false; btn.innerHTML = "<i class=\"bi bi-arrow-counterclockwise\"></i> Refund";
+          alert("Refund failed: " + (data.message || "Unknown error"));
+        }
+      } catch(e) {
+        btn.disabled = false; btn.innerHTML = "<i class=\"bi bi-arrow-counterclockwise\"></i> Refund";
+        alert("Error: " + e.message);
+      }
+    });
+  });
+
+  document.getElementById('admin-order-search')?.addEventListener('input', function () {
+    const query = this.value.trim().toLowerCase();
+    const rows = document.querySelectorAll('.admin-table tbody tr');
+    rows.forEach(row => {
+      row.style.display = row.textContent.toLowerCase().includes(query) ? '' : 'none';
+    });
+  });
+</script>

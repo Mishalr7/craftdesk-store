@@ -103,6 +103,23 @@ window.UX_FRICTION_WEBSITE_ID = "a6d2b63c5138eb6c32b301ff1dab7671";
     const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
     updateThemeUI(currentTheme);
   });
+
+  // Sync cart badge when navigating back/forward via browser cache (bfcache / back_forward)
+  window.addEventListener('pageshow', async (event) => {
+    const navEntries = performance.getEntriesByType ? performance.getEntriesByType('navigation') : [];
+    const isBackForward = event.persisted || (navEntries[0] && navEntries[0].type === 'back_forward');
+    if (isBackForward) {
+      try {
+        const res = await fetch('/cart-count', { cache: 'no-store' });
+        const data = await res.json();
+        if (typeof data.cartCount === 'number') {
+          document.querySelectorAll('.cart-badge').forEach(b => {
+            b.innerText = data.cartCount;
+          });
+        }
+      } catch (e) {}
+    }
+  });
 </script>
 
 

@@ -1,0 +1,287 @@
+<section class="container" style="margin-top: 135px; padding-bottom: 60px;">
+
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb mb-0" style="font-size: 0.9rem;">
+      <li class="breadcrumb-item"><a href="/" class="text-decoration-none" style="color: #0d9488; font-weight: 500;">Home</a></li>
+      {{#if product.category}}
+        <li class="breadcrumb-item">
+          <a href="/?category={{encodeURIComponent product.category}}" class="text-decoration-none" style="color: #0d9488; font-weight: 500;">{{product.category}}</a>
+        </li>
+      {{/if}}
+      <li class="breadcrumb-item active" aria-current="page" style="color: #4b5563;">{{product.name}}</li>
+    </ol>
+  </nav>
+
+  <div class="row g-4 align-items-stretch">
+
+    <!-- Left: Image Gallery -->
+    <div class="col-lg-6">
+      <div class="p-4 text-center position-relative d-flex align-items-center justify-content-center product-detail-img-box" style="min-height: 420px;">
+        {{#if product.hasOffer}}
+          <span class="badge bg-danger position-absolute top-0 start-0 m-3 fs-6">{{product.discountPercent}}% OFF</span>
+        {{/if}}
+
+        {{#if product.images.length}}
+          {{#if (startsWith product.images.[0] "http")}}
+            <img id="mainProductImage" src="{{product.images.[0]}}" alt="{{product.name}}" class="img-fluid rounded" style="max-height: 390px; object-fit: contain;">
+          {{else}}
+            <img id="mainProductImage" src="/product-images/{{product.images.[0]}}" alt="{{product.name}}" class="img-fluid rounded" style="max-height: 390px; object-fit: contain;">
+          {{/if}}
+        {{else}}
+          <img id="mainProductImage" src="/img/no-image.png" alt="No image" class="img-fluid rounded" style="max-height: 390px; object-fit: contain;">
+        {{/if}}
+      </div>
+
+      {{#if product.images.length}}
+        <div class="d-flex gap-2 mt-3 flex-wrap">
+          {{#each product.images}}
+            {{#if (startsWith this "http")}}
+              <img src="{{this}}" alt="Thumbnail" class="rounded border product-thumb bg-white p-1" style="width: 72px; height: 72px; object-fit: cover; cursor: pointer;" onclick="changeMainImage(this)">
+            {{else}}
+              <img src="/product-images/{{this}}" alt="Thumbnail" class="rounded border product-thumb bg-white p-1" style="width: 72px; height: 72px; object-fit: cover; cursor: pointer;" onclick="changeMainImage(this)">
+            {{/if}}
+          {{/each}}
+        </div>
+      {{/if}}
+    </div>
+
+    <!-- Right: Product Details Card -->
+    <div class="col-lg-6">
+      <div class="p-4 p-md-5 h-100 d-flex flex-column justify-content-between product-detail-card">
+        <div>
+          {{#if product.brand}}
+            <div class="text-uppercase fw-semibold small mb-1" style="color: #14b8a6; letter-spacing: 0.5px;">{{product.brand}}</div>
+          {{/if}}
+
+          <h1 class="fw-bold mb-2 product-detail-title" style="font-size: 1.75rem; line-height: 1.3;">{{product.name}}</h1>
+
+          {{#if product.category}}
+            <div class="mb-3">
+              <a href="/?category={{encodeURIComponent product.category}}" class="badge text-decoration-none product-detail-cat">
+                {{product.category}}
+              </a>
+            </div>
+          {{/if}}
+
+          <!-- Price -->
+          <div class="d-flex align-items-baseline gap-2 mb-3">
+            <span class="fs-2 fw-bold" style="color: #14b8a6;">₹{{product.price}}</span>
+            {{#if product.hasOffer}}
+              <span class="fs-5 text-decoration-line-through" style="color: #9ca3af;">₹{{product.originalPrice}}</span>
+              <span class="badge bg-danger">{{product.discountPercent}}% OFF</span>
+            {{/if}}
+          </div>
+
+          <!-- Stock -->
+          <div class="mb-4">
+            {{#if product.stock}}
+              <span class="badge bg-success px-3 py-2">In Stock</span>
+              {{#if product.lowStock}}
+                <span class="text-danger fw-semibold ms-2 small">Only {{product.stockCount}} left!</span>
+              {{/if}}
+            {{else}}
+              <span class="badge bg-danger px-3 py-2">Out of Stock</span>
+            {{/if}}
+          </div>
+
+          <hr class="product-detail-divider">
+
+          <!-- Description -->
+          <div class="mb-4">
+            <h6 class="fw-bold text-uppercase small mb-2 product-detail-label">Product Description</h6>
+            {{#if product.description}}
+              <p class="mb-0 product-detail-desc" style="white-space: pre-line; line-height: 1.7; font-size: 0.98rem;">{{product.description}}</p>
+            {{else}}
+              <p class="mb-0 product-detail-label">No description provided for this product.</p>
+            {{/if}}
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="d-flex gap-3 flex-wrap align-items-center pt-2">
+          {{#if product.stock}}
+            <button
+              type="button"
+              id="detailAddBtn"
+              class="btn-main px-4 py-2 {{#if inCartQty}}d-none{{/if}}"
+              onclick="addToCartDetail('{{product._id}}')"
+            >
+              <i class="bi bi-bag-plus me-2"></i>Add to Cart
+            </button>
+
+            <div
+              id="detailQtyStepper"
+              class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill border {{#unless inCartQty}}d-none{{/unless}}"
+              style="border-color: #0d9488 !important; background: rgba(13, 148, 136, 0.08);"
+            >
+              <button
+                type="button"
+                class="btn btn-sm fw-bold border-0 px-2"
+                style="color: #0d9488; font-size: 1.1rem;"
+                onclick="updateDetailQty('{{product._id}}', 'decrease')"
+              >−</button>
+              <span class="fw-semibold px-1" style="min-width: 74px; text-align: center;">
+                <span id="inCartQtyText">{{inCartQty}}</span> in Cart
+              </span>
+              <button
+                type="button"
+                class="btn btn-sm fw-bold border-0 px-2"
+                style="color: #0d9488; font-size: 1.1rem;"
+                onclick="updateDetailQty('{{product._id}}', 'increase')"
+              >+</button>
+            </div>
+          {{else}}
+            <button type="button" class="btn-main disabled-btn px-4 py-2" disabled>
+              Out of Stock
+            </button>
+          {{/if}}
+          <a href="/cart" class="btn-outline px-4 py-2">View Cart</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Related Products -->
+  {{#if relatedProducts.length}}
+    <hr class="my-5" style="border-color: rgba(0,0,0,0.1);">
+    <h4 class="section-title mb-4">Related Products</h4>
+    <div class="products-grid">
+      {{#each relatedProducts}}
+        <div class="product-card">
+          <div class="product-img position-relative">
+            {{#if this.hasOffer}}
+              <span class="badge bg-danger position-absolute top-0 start-0 m-2" style="z-index:2;">{{this.discountPercent}}% OFF</span>
+            {{/if}}
+            <a href="/product/{{this._id}}" class="d-block w-100 h-100">
+              {{#if this.images}}
+                {{#if (startsWith this.images.[0] "http")}}
+                  <img src="{{this.images.[0]}}" alt="{{this.name}}">
+                {{else}}
+                  <img src="/product-images/{{this.images.[0]}}" alt="{{this.name}}">
+                {{/if}}
+              {{else}}
+                <img src="/img/no-image.png" alt="No image">
+              {{/if}}
+            </a>
+          </div>
+          <div class="product-info">
+            <h5 class="price">
+              ₹{{this.price}}
+              {{#if this.hasOffer}}
+                <span class="text-muted text-decoration-line-through ms-1" style="font-size:0.85rem;font-weight:400;">₹{{this.originalPrice}}</span>
+              {{/if}}
+            </h5>
+            <a href="/product/{{this._id}}" class="text-decoration-none text-reset">
+              <p class="title">{{this.name}}</p>
+            </a>
+          </div>
+          <div class="actions">
+            <a href="/product/{{this._id}}" class="btn-outline w-100 text-center">View Details</a>
+          </div>
+        </div>
+      {{/each}}
+    </div>
+  {{/if}}
+
+</section>
+
+<script>
+  function changeMainImage(thumbEl) {
+    const main = document.getElementById('mainProductImage');
+    if (main && thumbEl) {
+      main.src = thumbEl.src;
+      document.querySelectorAll('.product-thumb').forEach(t => t.style.borderColor = '#dee2e6');
+      thumbEl.style.borderColor = '#0d9488';
+    }
+  }
+
+  let currentCartQty = Number('{{inCartQty}}') || 0;
+
+  function syncDetailQtyUI(qty) {
+    currentCartQty = qty;
+    const addBtn = document.getElementById('detailAddBtn');
+    const stepper = document.getElementById('detailQtyStepper');
+    const qtyText = document.getElementById('inCartQtyText');
+    if (qtyText) qtyText.textContent = qty;
+    if (qty > 0) {
+      addBtn?.classList.add('d-none');
+      stepper?.classList.remove('d-none');
+    } else {
+      addBtn?.classList.remove('d-none');
+      stepper?.classList.add('d-none');
+    }
+  }
+
+  async function addToCartDetail(productId) {
+    try {
+      const response = await fetch('/add-to-cart/' + productId);
+      if (response.redirected) {
+        window.location.href = response.url;
+        return;
+      }
+      const data = await response.json();
+      if (data.status) {
+        const badges = document.querySelectorAll('.cart-badge');
+        badges.forEach(badge => {
+          badge.innerText = typeof data.cartCount === 'number'
+            ? data.cartCount
+            : Number(badge.innerText) + 1;
+        });
+        syncDetailQtyUI(currentCartQty + 1);
+      } else if (data.message) {
+        if (typeof Swal !== 'undefined') {
+          Swal.fire({ icon: 'warning', title: 'Stock Limit', text: data.message });
+        } else {
+          alert(data.message);
+        }
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function updateDetailQty(productId, action) {
+    try {
+      const response = await fetch('/change-quantity/' + productId + '/' + action + '?ajax=1');
+      if (response.redirected) {
+        window.location.href = response.url;
+        return;
+      }
+      const data = await response.json();
+      if (data.status) {
+        const nextQty = action === 'increase' ? currentCartQty + 1 : Math.max(0, currentCartQty - 1);
+        syncDetailQtyUI(nextQty);
+        if (typeof data.cartCount === 'number') {
+          document.querySelectorAll('.cart-badge').forEach(badge => {
+            badge.innerText = data.cartCount;
+          });
+        }
+      } else if (data.message) {
+        if (typeof Swal !== 'undefined') {
+          Swal.fire({ icon: 'warning', title: 'Stock Limit', text: data.message });
+        } else {
+          alert(data.message);
+        }
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // Sync product quantity stepper if user navigates back to this page
+  window.addEventListener('pageshow', async (event) => {
+    const navEntries = performance.getEntriesByType ? performance.getEntriesByType('navigation') : [];
+    const isBackForward = event.persisted || (navEntries[0] && navEntries[0].type === 'back_forward');
+    if (isBackForward) {
+      try {
+        const res = await fetch('/cart-count?productId={{product._id}}', { cache: 'no-store' });
+        const data = await res.json();
+        if (typeof data.productQty === 'number') {
+          syncDetailQtyUI(data.productQty);
+        }
+      } catch (e) {}
+    }
+  });
+</script>

@@ -7,17 +7,21 @@
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "connect-mongo": "^6.0.0",
     "cookie-parser": "~1.4.4",
+    "csrf-csrf": "^4.1.0",
     "debug": "~2.6.9",
     "dotenv": "^17.4.2",
     "express": "^4.22.1",
     "express-handlebars": "^8.0.3",
+    "express-rate-limit": "^8.7.5",
     "express-session": "^1.19.0",
     "hbs": "^4.2.0",
     "http-errors": "~1.6.3",
     "mongodb": "^7.0.0",
     "morgan": "~1.9.1",
     "multer": "^2.0.2",
+    "nodemailer": "^10.6.1",
     "nodemon": "^3.1.11",
     "razorpay": "^2.9.8"
   }

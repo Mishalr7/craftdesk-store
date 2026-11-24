@@ -8,8 +8,29 @@
       {{#if loginError}}
         <p class="error-text">Invalid email or password</p>
       {{/if}}
+      {{#if notVerified}}
+        <p class="error-text">Please verify your email address before logging in.</p>
+        <form action="/resend-verification" method="POST" style="margin-bottom:1rem;">
+          <input type="hidden" name="_csrf" value="{{csrfToken}}">
+          <input type="hidden" name="email" value="{{unverifiedEmail}}">
+          <button type="submit" class="btn-outline" style="padding:6px 12px;font-size:0.85rem;">Resend Verification Email</button>
+        </form>
+      {{/if}}
+      {{#if verifySent}}
+        <p class="text-success" style="font-weight:600;">Verification link sent! Please check your email inbox before logging in.</p>
+      {{/if}}
+      {{#if verifiedSuccess}}
+        <p class="text-success" style="font-weight:600;">Email verified successfully! You can now log in.</p>
+      {{/if}}
+      {{#if verifiedInvalid}}
+        <p class="error-text">Verification link is invalid or has expired. Please log in to request a new link.</p>
+      {{/if}}
+      {{#if resetSuccess}}
+        <p class="text-success" style="font-weight:600;">Password reset successfully! Please log in.</p>
+      {{/if}}
 
       <form action="/login" method="post">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
         <input placeholder="Email" name="email" required>
 <div class="password-wrap">
   <input 
@@ -24,9 +45,10 @@
 
 
 
-        <a class="forgot-link" href="/forgot">Forgot password?</a>
-
         <button class="btn-main">Sign In</button>
+        <p class="switch-text" style="margin-top:0.75rem;">
+          <a href="/forgot" class="forgot-link">Forgot password?</a>
+        </p>
       </form>
     </div>
 

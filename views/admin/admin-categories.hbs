@@ -1,0 +1,74 @@
+<section class="container py-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+      <h2 class="admin-title mb-1">Manage Categories</h2>
+      <p class="admin-subtitle mb-0">Categories here automatically sync with the Storefront Header and Product forms</p>
+    </div>
+    <span class="badge bg-primary fs-6">{{categories.length}} Categories</span>
+  </div>
+
+  {{#if error}}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      {{error}}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  {{/if}}
+
+  {{#if success}}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      {{success}}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  {{/if}}
+
+  <div class="row g-4">
+    <div class="col-md-5">
+      <div class="card p-4 admin-card">
+        <h5 class="mb-3">Add New Category</h5>
+        <form action="/admin/categories/add" method="POST">
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Category Name</label>
+            <input type="text" name="name" class="form-control" placeholder="e.g. Desk Organizers" required>
+          </div>
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-1"></i> Add Category
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="col-md-7">
+      <div class="card p-4 admin-card">
+        <h5 class="mb-3">Existing Categories</h5>
+        {{#if categories.length}}
+          <div class="table-responsive">
+            <table class="table table-hover align-middle admin-table mb-0">
+              <thead class="table-dark">
+                <tr>
+                  <th>Name</th>
+                  <th class="text-end">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each categories}}
+                <tr>
+                  <td><strong>{{this.name}}</strong></td>
+                  <td class="text-end">
+                    <a href="/admin/categories/delete/{{this._id}}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete category &quot;{{this.name}}&quot;?')">
+                      <i class="bi bi-trash"></i> Delete
+                    </a>
+                  </td>
+                </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          </div>
+        {{else}}
+          <p class="text-secondary mb-0">No categories yet.</p>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+
+</section>

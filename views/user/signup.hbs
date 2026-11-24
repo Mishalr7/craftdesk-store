@@ -4,9 +4,11 @@
     <h2 class="signup-title">Create Account</h2>
     <p class="signup-sub">Join CraftDesk for deals and new arrivals.</p>
     {{#if signupError}}
-      <p class="error-text">Email already in use. Please use a different email.</p>
+      <p class="error-text">{{signupError}}</p>
     {{/if}}
     <form action="/signup" method="POST" class="signup-form">
+
+      <input type="hidden" name="_csrf" value="{{csrfToken}}">
 
       <div class="row-2">
         <input type="text" name="firstName" placeholder="First Name" required>

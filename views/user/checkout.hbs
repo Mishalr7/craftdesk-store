@@ -258,6 +258,19 @@
 
       rzp.on('payment.failed', function (failResponse) {
         resetButton();
+        // Record failure on backend for audit trail
+        fetch('/payment-failed', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            razorpay_order_id: failResponse.error && failResponse.error.metadata ? failResponse.error.metadata.order_id : null,
+            razorpay_payment_id: failResponse.error && failResponse.error.metadata ? failResponse.error.metadata.payment_id : null,
+            error_code: failResponse.error ? failResponse.error.code : null,
+            error_description: failResponse.error ? failResponse.error.description : null,
+            error_reason: failResponse.error ? failResponse.error.reason : null
+          })
+        }).catch(function(e) { console.warn('Failed to record payment failure:', e); });
+
         if (typeof Swal !== 'undefined') {
           Swal.fire({
             icon: 'error',

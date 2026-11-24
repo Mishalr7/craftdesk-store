@@ -21,7 +21,7 @@
         <span class="input-group-text bg-dark text-white border-0">
           <i class="bi bi-search"></i>
         </span>
-        <input type="text" class="form-control admin-search-input admin-muted-input" placeholder="Search products...">
+        <input type="text" id="admin-product-search" class="form-control admin-search-input admin-muted-input" placeholder="Search products by name, brand, or category...">
       </div>
     </div>
 
@@ -91,9 +91,12 @@
 
             <td>
               {{#if this.stock}}
-                <span class="badge bg-success px-3 py-2">In Stock</span>
+                <span class="badge bg-success px-3 py-2">In Stock{{#if (eq this.stockCount undefined)}}{{else}} ({{this.stockCount}}){{/if}}</span>
               {{else}}
                 <span class="badge bg-danger px-3 py-2">Out of Stock</span>
+              {{/if}}
+              {{#if this.isFeatured}}
+                <span class="badge bg-warning text-dark ms-1">Featured</span>
               {{/if}}
             </td>
 
@@ -170,6 +173,15 @@ function confirmDeleteFinal() {
     alert("Type DELETE correctly to confirm.");
   }
 }
+
+document.getElementById('admin-product-search')?.addEventListener('input', function () {
+  const query = this.value.trim().toLowerCase();
+  const rows = document.querySelectorAll('.admin-table-dark tbody tr');
+  rows.forEach(row => {
+    const text = row.textContent.toLowerCase();
+    row.style.display = text.includes(query) ? '' : 'none';
+  });
+});
 </script>
 
 

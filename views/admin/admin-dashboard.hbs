@@ -13,56 +13,60 @@
     <!-- Revenue -->
     <div class="col-md-3">
       <div class="card p-3 admin-card">
-        <div class="d-flex justify-content-between">
+        <div class="d-flex justify-content-between align-items-start">
           <div class="p-2 bg-success bg-opacity-25 rounded">
             <i class="bi bi-cash-coin text-success fs-3"></i>
           </div>
-          <span class="badge bg-success-subtle text-success">+12.5%</span>
+          <span class="badge bg-success-subtle text-success">{{stats.paidOrders}} Paid</span>
         </div>
         <p class="text-secondary mt-3 mb-1">Total Revenue</p>
-        <div class="fs-3 fw-bold">$12,450</div>
+        <div class="fs-3 fw-bold">₹{{stats.totalRevenue}}</div>
       </div>
     </div>
 
     <!-- Orders -->
     <div class="col-md-3">
-      <div class="card p-3 admin-card">
-        <div class="d-flex justify-content-between">
-          <div class="p-2 bg-primary bg-opacity-25 rounded">
-            <i class="bi bi-cart-check text-primary fs-3"></i>
+      <a href="/admin/orders" class="text-decoration-none text-reset">
+        <div class="card p-3 admin-card">
+          <div class="d-flex justify-content-between align-items-start">
+            <div class="p-2 bg-primary bg-opacity-25 rounded">
+              <i class="bi bi-cart-check text-primary fs-3"></i>
+            </div>
+            <span class="badge bg-primary-subtle text-primary">{{stats.pendingOrders}} Active</span>
           </div>
-          <span class="badge bg-success-subtle text-success">+4.2%</span>
+          <p class="text-secondary mt-3 mb-1">Total Orders</p>
+          <div class="fs-3 fw-bold">{{stats.totalOrders}}</div>
         </div>
-        <p class="text-secondary mt-3 mb-1">Total Orders</p>
-        <div class="fs-3 fw-bold">156</div>
-      </div>
+      </a>
     </div>
 
     <!-- Products -->
     <div class="col-md-3">
-      <div class="card p-3 admin-card">
-        <div class="d-flex justify-content-between">
-          <div class="p-2 bg-info bg-opacity-25 rounded">
-            <i class="bi bi-box-seam text-info fs-3"></i>
+      <a href="/admin/products" class="text-decoration-none text-reset">
+        <div class="card p-3 admin-card">
+          <div class="d-flex justify-content-between align-items-start">
+            <div class="p-2 bg-info bg-opacity-25 rounded">
+              <i class="bi bi-box-seam text-info fs-3"></i>
+            </div>
+            <span class="badge bg-info-subtle text-info">In Store</span>
           </div>
-          <span class="badge bg-success-subtle text-success">+3.1%</span>
+          <p class="text-secondary mt-3 mb-1">Products</p>
+          <div class="fs-3 fw-bold">{{stats.totalProducts}}</div>
         </div>
-        <p class="text-secondary mt-3 mb-1">Products</p>
-        <div class="fs-3 fw-bold">8</div>
-      </div>
+      </a>
     </div>
 
     <!-- Users -->
     <div class="col-md-3">
       <div class="card p-3 admin-card">
-        <div class="d-flex justify-content-between">
+        <div class="d-flex justify-content-between align-items-start">
           <div class="p-2 bg-warning bg-opacity-25 rounded">
             <i class="bi bi-people text-warning fs-3"></i>
           </div>
-          <span class="badge bg-success-subtle text-success">+8.1%</span>
+          <span class="badge bg-warning-subtle text-warning">Registered</span>
         </div>
-        <p class="text-secondary mt-3 mb-1">Active Users</p>
-        <div class="fs-3 fw-bold">2,300</div>
+        <p class="text-secondary mt-3 mb-1">Total Users</p>
+        <div class="fs-3 fw-bold">{{stats.totalUsers}}</div>
       </div>
     </div>
 
@@ -72,19 +76,91 @@
   <div class="row mt-4 g-4">
 
     <div class="col-md-8">
-      <div class="card p-4 admin-card">
-        <h5>Revenue Analytics</h5>
-        <p class="text-secondary">Chart visualization will come here</p>
+      <div class="card p-4 admin-card h-100">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="mb-0">Revenue Analytics (Last 7 Days)</h5>
+          <span class="text-secondary small">Excluding cancelled & refunded</span>
+        </div>
+        <div style="position: relative; height: 280px;">
+          <canvas id="revenueChart"></canvas>
+        </div>
       </div>
     </div>
 
     <div class="col-md-4">
-      <div class="card p-4 admin-card">
-        <h5>Recent Activity</h5>
-        <p class="text-secondary">Activity feed placeholder</p>
+      <div class="card p-4 admin-card h-100">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="mb-0">Recent Orders</h5>
+          <a href="/admin/orders" class="small text-decoration-none">View all →</a>
+        </div>
+
+        {{#if stats.recentActivity.length}}
+          <div class="d-flex flex-column gap-3">
+            {{#each stats.recentActivity}}
+              <div class="d-flex justify-content-between align-items-center pb-2 border-bottom border-secondary border-opacity-25">
+                <div>
+                  <div class="fw-semibold">#{{this.orderCode}} · {{this.customerName}}</div>
+                  <div class="text-secondary small">{{this.formattedDate}}</div>
+                </div>
+                <div class="text-end">
+                  <div class="fw-bold">₹{{this.amount}}</div>
+                  <span class="badge bg-secondary-subtle text-secondary">{{this.status}}</span>
+                </div>
+              </div>
+            {{/each}}
+          </div>
+        {{else}}
+          <p class="text-secondary mb-0">No orders yet.</p>
+        {{/if}}
       </div>
     </div>
 
   </div>
 
 </section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+  (function () {
+    const ctx = document.getElementById('revenueChart');
+    if (!ctx) return;
+
+    const labels = {{{stats.chartLabelsJson}}};
+    const data = {{{stats.chartDataJson}}};
+
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Revenue (₹)',
+          data,
+          backgroundColor: 'rgba(13, 148, 136, 0.7)',
+          borderColor: '#0d9488',
+          borderWidth: 1,
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (context) => '₹' + Number(context.raw || 0).toLocaleString('en-IN')
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: (value) => '₹' + value
+            }
+          }
+        }
+      }
+    });
+  })();
+</script>

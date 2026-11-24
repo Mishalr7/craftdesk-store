@@ -16,26 +16,25 @@
         <!-- 2. Navigation Menu & Desktop Search (Center / Middle on Desktop) -->
         <div class="collapse navbar-collapse" id="navBar">
           <ul class="navbar-nav me-auto">
-            <li class="nav-item"><a class="nav-link active" href="/">Home</a></li>
+            <li class="nav-item"><a class="nav-link {{#if (eq activeNav 'home')}}active{{/if}}" href="/">Home</a></li>
 
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Categories</a>
+              <a class="nav-link dropdown-toggle {{#if (eq activeNav 'categories')}}active{{/if}}" data-bs-toggle="dropdown" style="cursor:pointer;">Categories</a>
               <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#">Office Essentials</a></li>
-                <li><a class="dropdown-item" href="#">Craft & DIY</a></li>
-                <li><a class="dropdown-item" href="#">Art & Paints</a></li>
-                <li><a class="dropdown-item" href="#">Stationery</a></li>
+                {{#each categories}}
+                  <li><a class="dropdown-item" href="/?category={{encodeURIComponent this.name}}">{{this.name}}</a></li>
+                {{/each}}
               </ul>
             </li>
 
-            <li class="nav-item"><a class="nav-link" href="#">New Arrivals</a></li>
-            <li class="nav-item"><a class="nav-link" href="/sale">Sale</a></li>
-            <li class="nav-item"><a class="nav-link" href="/blog">Blog</a></li>
+            <li class="nav-item"><a class="nav-link {{#if (eq activeNav 'new-arrivals')}}active{{/if}}" href="/?sort=newest">New Arrivals</a></li>
+            <li class="nav-item"><a class="nav-link {{#if (eq activeNav 'offers')}}active{{/if}}" href="/?offers=true">Offers</a></li>
+            <li class="nav-item"><a class="nav-link {{#if (eq activeNav 'blog')}}active{{/if}}" href="/blog">Blog</a></li>
           </ul>
 
           <!-- Desktop Search -->
-          <form class="d-flex me-3 search-area d-none d-lg-flex">
-            <input class="form-control" type="search" placeholder="Search products...">
+          <form action="/" method="GET" class="d-flex me-3 search-area d-none d-lg-flex">
+            <input class="form-control" type="search" name="q" value="{{searchQuery}}" placeholder="Search products...">
           </form>
         </div>
 
@@ -63,11 +62,6 @@
             </a>
           {{/if}}
 
-          <!-- Wishlist -->
-          <a href="#" class="icon-tip nav-icon-link d-none d-sm-inline-flex" data-tip="Wishlist">
-            <i class="bi bi-heart"></i>
-          </a>
-
           <!-- Cart Badge -->
           <a href="/cart" class="position-relative nav-cart icon-tip nav-icon-link" data-tip="Cart">
             <i class="bi bi-bag-fill"></i>
@@ -82,8 +76,8 @@
         </div>
 
         <!-- 4. Mobile Search (Sub-row) -->
-        <form class="search-area d-lg-none mt-2 w-100">
-          <input class="form-control" type="search" placeholder="Search products...">
+        <form action="/" method="GET" class="search-area d-lg-none mt-2 w-100">
+          <input class="form-control" type="search" name="q" value="{{searchQuery}}" placeholder="Search products...">
         </form>
       </div>
     </nav>

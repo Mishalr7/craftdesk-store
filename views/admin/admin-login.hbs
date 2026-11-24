@@ -1,0 +1,31 @@
+<section class="login-page container">
+  <h1 class="login-title">Admin Portal</h1>
+
+  <div class="login-grid" style="justify-content: center;">
+    <div class="login-box" style="max-width:420px; width:100%;">
+      <h3>Admin Sign In</h3>
+
+      {{#if loginError}}
+        <p class="error-text">{{loginError}}</p>
+      {{/if}}
+
+      <form action="/admin/login" method="POST">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
+        <input type="email" placeholder="Admin Email" name="email" required style="margin-bottom:1rem;">
+
+        <div class="password-wrap" style="margin-bottom:1.2rem;">
+          <input
+            type="password"
+            id="adminPassword"
+            name="password"
+            placeholder="Password"
+            required
+          >
+          <i class="bi bi-eye password-toggle" onclick="togglePassword('adminPassword', this)"></i>
+        </div>
+
+        <button type="submit" class="btn-main">Sign In</button>
+      </form>
+    </div>
+  </div>
+</section>

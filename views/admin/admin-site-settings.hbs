@@ -1,0 +1,49 @@
+<section class="container py-4">
+
+  <div class="mb-4">
+    <h2 class="admin-title mb-1">Site Settings</h2>
+    <p class="admin-subtitle mb-0">Configure store branding, shipping threshold, and checkout options</p>
+  </div>
+
+  {{#if saved}}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <i class="bi bi-check-circle me-2"></i>Site settings saved successfully!
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  {{/if}}
+
+  <div class="card p-4 admin-card" style="max-width: 720px;">
+    <form action="/admin/site-settings" method="POST">
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Store Name</label>
+        <input type="text" name="storeName" class="form-control" value="{{settings.storeName}}" required>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Top Announcement Banner</label>
+        <input type="text" name="bannerText" class="form-control" value="{{settings.bannerText}}">
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Free Shipping Threshold (₹)</label>
+          <input type="number" name="freeShippingThreshold" class="form-control" min="0" value="{{settings.freeShippingThreshold}}" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Support Email</label>
+          <input type="email" name="supportEmail" class="form-control" value="{{settings.supportEmail}}">
+        </div>
+      </div>
+
+      <div class="form-check form-switch mb-4">
+        <input class="form-check-input" type="checkbox" id="codEnabled" name="codEnabled" {{#if settings.codEnabled}}checked{{/if}}>
+        <label class="form-check-label" for="codEnabled">Enable Cash on Delivery (COD)</label>
+      </div>
+
+      <button type="submit" class="btn btn-primary">
+        <i class="bi bi-save me-1"></i> Save Settings
+      </button>
+    </form>
+  </div>
+
+</section>

@@ -2,6 +2,13 @@
 
   <h2 class="cart-title">Your Cart</h2>
 
+  {{#if stockError}}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+      {{stockError}}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  {{/if}}
+
   {{#if cartProducts.length}}
 
     <div class="cart-wrapper">

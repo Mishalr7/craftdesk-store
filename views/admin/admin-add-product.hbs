@@ -11,9 +11,15 @@
         <input name="name" class="form-control admin-input-dark" required>
       </div>
 
-      <div class="mb-3">
-        <label class="admin-muted">Price</label>
-        <input name="price" type="number" class="form-control admin-input-dark" required>
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <label class="admin-muted">Selling / Offer Price (₹)</label>
+          <input name="price" type="number" min="0" class="form-control admin-input-dark" required>
+        </div>
+        <div class="col-md-6">
+          <label class="admin-muted">Original Price / MRP (₹) <small>(optional, for Offers)</small></label>
+          <input name="originalPrice" type="number" min="0" class="form-control admin-input-dark" placeholder="Leave blank if no offer">
+        </div>
       </div>
 
       <div class="mb-3">
@@ -22,28 +28,60 @@
       </div>
       
       <div class="mb-3">
-  <label class="admin-muted">Category</label>
-  <input name="category" class="form-control admin-input-dark" required>
-</div>
-
-
-      <div class="mb-3">
-        <label class="admin-muted">Stock Status</label>
-        <select name="stock" class="form-control admin-input-dark">
-          <option value="true">In Stock</option>
-          <option value="false">Out of Stock</option>
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <label class="admin-muted mb-0">Category</label>
+          <a href="/admin/categories" class="small text-info text-decoration-none">+ Manage Categories</a>
+        </div>
+        <select name="category" class="form-control admin-input-dark" required>
+          <option value="" disabled selected>Select a category</option>
+          {{#each categories}}
+            <option value="{{this.name}}">{{this.name}}</option>
+          {{/each}}
         </select>
       </div>
 
-      <div class="mb-3">
-        <label class="admin-muted">Upload Images</label>
-        <input name="images" type="file" class="form-control admin-input-dark" multiple>
-        <small class="admin-muted">You can select multiple files</small>
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <label class="admin-muted">Stock Quantity</label>
+          <input name="stockCount" type="number" min="0" value="10" class="form-control admin-input-dark" required>
+        </div>
+        <div class="col-md-6">
+          <label class="admin-muted">Stock Status</label>
+          <select name="stock" class="form-control admin-input-dark">
+            <option value="true">In Stock</option>
+            <option value="false">Out of Stock</option>
+          </select>
+        </div>
       </div>
 
-      <div class="mb-3">
-        <label class="admin-muted">Or Image URL</label>
-        <input name="imageUrl" class="form-control admin-input-dark" placeholder="https://example.com/product.jpg">
+      <div class="form-check form-switch mb-3">
+        <input class="form-check-input" type="checkbox" id="isFeatured" name="isFeatured">
+        <label class="form-check-label admin-muted" for="isFeatured">Feature on Home Page (shown first)</label>
+      </div>
+
+      <div class="p-3 mb-3 rounded" style="background: rgba(255,255,255,0.03); border: 1px solid #1f2a44;">
+        <h6 class="text-white fw-semibold mb-3"><i class="bi bi-image me-2 text-info"></i>Main Cover Image (Shown on Store Cards) *</h6>
+        <div class="mb-2">
+          <label class="admin-muted">Upload Main Image</label>
+          <input name="mainImage" type="file" accept="image/*" class="form-control admin-input-dark">
+        </div>
+        <div>
+          <label class="admin-muted">Or Main Image URL</label>
+          <input name="mainImageUrl" class="form-control admin-input-dark" placeholder="https://example.com/main-cover.jpg">
+        </div>
+      </div>
+
+      <div class="p-3 mb-3 rounded" style="background: rgba(255,255,255,0.03); border: 1px solid #1f2a44;">
+        <h6 class="text-white fw-semibold mb-3"><i class="bi bi-images me-2 text-info"></i>Additional Gallery Images (Optional, up to 4)</h6>
+        <div class="mb-2">
+          <label class="admin-muted">Upload Extra Images</label>
+          <input name="galleryImages" type="file" accept="image/*" class="form-control admin-input-dark" multiple>
+          <small class="admin-muted">Hold Ctrl / Cmd to select multiple files</small>
+        </div>
+        <div>
+          <label class="admin-muted">Or Extra Image URLs (one per line or comma-separated)</label>
+          <textarea name="galleryImageUrls" class="form-control admin-input-dark" rows="2" placeholder="https://example.com/side-view.jpg&#10;https://example.com/back-view.jpg"></textarea>
+        </div>
       </div>
 
       <div class="mb-3">
@@ -65,16 +103,16 @@
 <script>
 document.querySelector("form").addEventListener("submit", function(e){
 
-  const files = document.querySelector('input[name="images"]').files;
-  const imageUrl = document.querySelector('input[name="imageUrl"]').value.trim();
+  const files = document.querySelector('input[name="mainImage"]').files;
+  const imageUrl = document.querySelector('input[name="mainImageUrl"]').value.trim();
 
   if (!files.length && imageUrl === "") {
       e.preventDefault();
 
       Swal.fire({
         icon: 'error',
-        title: 'Image Required',
-        text: 'Please upload at least one image or provide an image URL.',
+        title: 'Main Image Required',
+        text: 'Please upload a main cover image or provide a main image URL.',
         background: '#0b1626',
         color: '#fff',
         confirmButtonColor: '#ff4d4d'
