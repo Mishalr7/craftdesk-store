@@ -10,6 +10,16 @@ const Razorpay = require('razorpay');
 const crypto = require('crypto');
 const bcrypt = require('bcrypt');
 const rateLimit = require('express-rate-limit');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+
+// Configure Cloudinary (uses CLOUDINARY_URL env var, or explicit keys)
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+  secure: true
+});
 
 // Rate limiter: max 10 admin login attempts per 15 minutes per IP
 const adminLoginLimiter = rateLimit({
@@ -37,18 +47,28 @@ const razorpay = new Razorpay({
 });
 
 
-// Storage config
-const storage = multer.diskStorage({
-  destination: function(req, file, cb){
-    cb(null, './public/product-images'); 
-  },
-  filename: function(req, file, cb){
-    cb(null, Date.now() + path.extname(file.originalname)); 
-  }
-});
+// Cloudinary storage for product images
+// Falls back to memory storage when Cloudinary env vars are not set (local dev without Cloudinary)
+let storage;
+if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET) {
+  storage = new CloudinaryStorage({
+    cloudinary,
+    params: {
+      folder: 'craftdesk-products',
+      allowed_formats: ['jpg', 'jpeg', 'png', 'webp', 'gif'],
+      transformation: [{ quality: 'auto', fetch_format: 'auto' }]
+    }
+  });
+} else {
+  // Local disk fallback for development (keeps existing behaviour)
+  storage = multer.diskStorage({
+    destination: function(req, file, cb){ cb(null, './public/product-images'); },
+    filename: function(req, file, cb){ cb(null, Date.now() + path.extname(file.originalname)); }
+  });
+}
 
 // Multer instance
-const upload = multer({ storage: storage });
+const upload = multer({ storage });
 
 // Public admin auth routes
 router.get('/login', (req, res) => {
@@ -153,7 +173,9 @@ const productImageUpload = upload.fields([
 ]);
 
 router.post('/add-product', productImageUpload, (req, res) => {
-  const mainFile = req.files?.mainImage?.[0]?.filename || null;
+  // Cloudinary returns .path (the secure URL); disk storage returns .filename
+  const getImgRef = (file) => file.path || file.filename;
+  const mainFile = req.files?.mainImage?.[0] ? getImgRef(req.files.mainImage[0]) : null;
   const mainUrl = req.body.mainImageUrl?.trim() || '';
   let price = Number(req.body.price);
   if (isNaN(price) || price < 0) price = 0;
@@ -168,7 +190,7 @@ router.post('/add-product', productImageUpload, (req, res) => {
   }
 
   const mainImg = mainFile || mainUrl;
-  const galleryFiles = (req.files?.galleryImages || []).map(f => f.filename);
+  const galleryFiles = (req.files?.galleryImages || []).map(f => f.path || f.filename);
   const galleryUrls = (req.body.galleryImageUrls || '')
     .split(/[\n,]+/)
     .map(s => s.trim())
@@ -260,7 +282,7 @@ router.post('/edit-product/:id', productImageUpload, async (req, res) => {
     }
 
     // 3. If a new Main Cover image was uploaded or provided via URL, put it at index 0
-    const newMainFile = req.files?.mainImage?.[0]?.filename || null;
+    const newMainFile = req.files?.mainImage?.[0] ? (req.files.mainImage[0].path || req.files.mainImage[0].filename) : null;
     const newMainUrl = req.body.mainImageUrl?.trim() || '';
     const newMain = newMainFile || newMainUrl;
     if (newMain) {
@@ -268,7 +290,7 @@ router.post('/edit-product/:id', productImageUpload, async (req, res) => {
     }
 
     // 4. Append any newly uploaded gallery images or URLs
-    const galleryFiles = (req.files?.galleryImages || []).map(f => f.filename);
+    const galleryFiles = (req.files?.galleryImages || []).map(f => f.path || f.filename);
     const galleryUrls = (req.body.galleryImageUrls || '')
       .split(/[\n,]+/)
       .map(s => s.trim())

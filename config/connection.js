@@ -5,7 +5,9 @@ const state = {
 };
 
 module.exports.connect = function (done) {
-  const url = 'mongodb://localhost:27017';
+  const url = process.env.MONGO_URI || 'mongodb://localhost:27017';
+  // If MONGO_URI includes the DB name (Atlas connection string), use it directly;
+  // otherwise fall back to appending the DB name.
   const dbName = 'craftdesk-store';
 
   MongoClient.connect(url)

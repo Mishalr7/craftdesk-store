@@ -14,6 +14,11 @@ const productHelpers = require('./helpers/product-helpers');
 const userHelpers = require('./helpers/user-helpers');
 const { engine } = require('express-handlebars');
 var app = express();
+
+// Trust the first reverse-proxy hop (required for Render, Railway, etc.)
+// so that req.ip, secure cookies, and rate-limiter IP detection work correctly.
+app.set('trust proxy', 1);
+
 var db = require('./config/connection');
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -52,7 +57,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
-    mongoUrl: 'mongodb://localhost:27017/craftdesk-store',
+    mongoUrl: process.env.MONGO_URI || 'mongodb://localhost:27017/craftdesk-store',
     collectionName: 'sessions',
     ttl: 60 * 60 * 24 * 7 // 7 days in seconds
   }),
