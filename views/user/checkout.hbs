@@ -59,6 +59,7 @@
               </label>
             </div>
 
+            {{#if siteSettings.codEnabled}}
             <div class="checkout-payment-card" onclick="document.getElementById('pay-cod').checked=true">
               <label class="checkout-label d-flex align-items-center justify-content-between w-100" style="cursor: pointer;">
                 <div class="d-flex align-items-center gap-3">
@@ -73,6 +74,7 @@
                 </div>
               </label>
             </div>
+            {{/if}}
           </div>
 
         </div>

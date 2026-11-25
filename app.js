@@ -115,6 +115,17 @@ app.use(async (req, res, next) => {
   } catch (e) {
     res.locals.categories = [];
   }
+  try {
+    res.locals.siteSettings = await userHelpers.getSiteSettings();
+  } catch (e) {
+    res.locals.siteSettings = {
+      storeName: 'CraftDesk Store',
+      bannerText: 'Free Shipping on orders above ₹999 • Exclusive Deals Everyday',
+      freeShippingThreshold: 999,
+      supportEmail: '',
+      codEnabled: true
+    };
+  }
   // Prevent browsers from caching dynamic pages with stale cart counts
   if (req.method === 'GET' && !req.path.startsWith('/stylesheets') && !req.path.startsWith('/javascripts') && !req.path.startsWith('/product-images') && !req.path.startsWith('/images')) {
     res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');

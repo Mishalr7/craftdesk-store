@@ -1,8 +1,10 @@
 <header>
     <!-- Premium Top Bar -->
+    {{#if siteSettings.bannerText}}
     <div class="top-bar text-center">
-      Free Shipping on orders above ₹999 • Exclusive Deals Everyday
+      {{siteSettings.bannerText}}
     </div>
+    {{/if}}
 
     <nav class="navbar navbar-expand-lg premium-nav shadow-sm">
       <div class="container">

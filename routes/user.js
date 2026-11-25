@@ -565,6 +565,12 @@ router.get(
 router.post('/place-order', verifyLogin, async (req, res) => {
 
   try {
+    if (req.body.paymentMethod === 'COD') {
+      const settings = await userHelpers.getSiteSettings();
+      if (!settings.codEnabled) {
+        return res.redirect('/checkout');
+      }
+    }
 
     await userHelpers.placeOrder(
       req.session.user._id,
