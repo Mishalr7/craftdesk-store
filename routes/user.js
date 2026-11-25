@@ -198,9 +198,7 @@ router.get('/signup', (req, res) => {
 
 async function sendVerificationEmail(email, token) {
   const verifyUrl = `${process.env.BASE_URL || 'http://localhost:3000'}/verify-email/${token}`;
-  const transporter = getMailTransporter();
-  await transporter.sendMail({
-    from: `"CraftDesk Store" <${process.env.GMAIL_USER}>`,
+  await sendEmail({
     to: email,
     subject: 'Verify your CraftDesk Store email',
     html: `
@@ -800,6 +798,45 @@ function getMailTransporter() {
   });
 }
 
+/**
+ * Send transactional email via Brevo HTTPS API (works on Render free tier where SMTP is blocked)
+ * or fall back to Gmail SMTP for local development.
+ */
+async function sendEmail({ to, subject, html }) {
+  const senderEmail = process.env.BREVO_SENDER_EMAIL || process.env.GMAIL_USER;
+
+  if (process.env.BREVO_API_KEY) {
+    const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: {
+        'accept': 'application/json',
+        'content-type': 'application/json',
+        'api-key': process.env.BREVO_API_KEY,
+      },
+      body: JSON.stringify({
+        sender: { name: 'CraftDesk Store', email: senderEmail },
+        to: [{ email: to }],
+        subject,
+        htmlContent: html,
+      }),
+    });
+
+    if (!res.ok) {
+      const errBody = await res.text();
+      throw new Error(`Brevo API error (${res.status}): ${errBody}`);
+    }
+    return;
+  }
+
+  const transporter = getMailTransporter();
+  await transporter.sendMail({
+    from: `"CraftDesk Store" <${senderEmail}>`,
+    to,
+    subject,
+    html,
+  });
+}
+
 // GET /forgot — show forgot password form
 router.get('/forgot', (req, res) => {
   res.render('user/forgot');
@@ -822,9 +859,7 @@ router.post('/forgot', async (req, res) => {
 
     if (token) {
       const resetUrl = `${process.env.BASE_URL || 'http://localhost:3000'}/reset-password/${token}`;
-      const transporter = getMailTransporter();
-      await transporter.sendMail({
-        from: `"CraftDesk Store" <${process.env.GMAIL_USER}>`,
+      await sendEmail({
         to: email,
         subject: 'Reset your CraftDesk password',
         html: `
